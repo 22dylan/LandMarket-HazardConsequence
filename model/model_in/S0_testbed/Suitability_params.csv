@@ -1,0 +1,13 @@
+lu_to,d_to,a,b,c,d
+unoccupied,coast,0,1,1,0
+unoccupied,road,0,1,1,0
+unoccupied,greenspace,0,1,1,0
+residential,coast,0.75,450,200,0
+residential,road,0.6,300,100,0
+residential,greenspace,1,10,100,0
+commercial,coast,0.3,0,50,0
+commercial,road,1,10,100,0
+commercial,greenspace,0,0,1,0
+seasonal_rental,coast,1,0,200,0
+seasonal_rental,road,0.6,350,100,0
+seasonal_rental,greenspace,0.3,10,100,0

@@ -1,0 +1,46 @@
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis version="3.20.0-Odense">
+  <identifier>https://delta.co.clatsop.or.us/server/rest/services/Zoning/MapServer/4</identifier>
+  <parentidentifier></parentidentifier>
+  <language></language>
+  <type>dataset</type>
+  <title>Zoning, Seaside</title>
+  <abstract>&lt;DIV STYLE="text-align:Left;">&lt;DIV>&lt;P>&lt;SPAN>The City of Seaside's Zoning Map was originally digitized into GIS formatting in 2004 by the Columbia River Estuary Study Taskforce (CREST). The City of Seaside had identified several areas where the 2004 map needed to be updated and/corrected. After corrections and updates were performed the map was then presented to the City Council for adoption. Errors to be corrected were identified and rectified with a draft submitted for public comment and a final map was adopted in January 2011 after comments were incorporated. &lt;/SPAN>&lt;/P>&lt;P>&lt;SPAN>2/3/2020 - Krysta spoke with Kevin Cupples, Seaside Planning Director, to see if they had more recent zoning data and he replied with, "&lt;/SPAN>&lt;SPAN>We currently don’t have anything more up to date than the last data layer you had posted.  We know there are errors in it but we have them noted on our wall maps here in the office.  Most of it is correct. About three CREST planners ago, we were going to have them correct the errors that we found on the original electronic map their staff generated for us under a grant from DLCD.  So we currently don’t have a truly good GIS map to rely on.  We have had discussions with a contractor in the past that was very interested in getting the map totally revised and updated, but the just never seems to be enough time to move the project from a back burner to a front burner, and then keep it there long enough to finish updating it."&lt;/SPAN>&lt;/P>&lt;P />&lt;P>&lt;SPAN />&lt;/P>&lt;/DIV>&lt;/DIV></abstract>
+  <contact>
+    <name></name>
+    <organization></organization>
+    <position></position>
+    <voice></voice>
+    <fax></fax>
+    <email></email>
+    <role></role>
+  </contact>
+  <links>
+    <link size="" mimeType="" url="https://delta.co.clatsop.or.us/server/rest/services/Zoning/MapServer/4" type="WWW:LINK" format="" description="" name="Source"/>
+  </links>
+  <fees></fees>
+  <rights>City of Seaside. Columbia River Estuary Study Taskforce (CREST)</rights>
+  <encoding></encoding>
+  <crs>
+    <spatialrefsys>
+      <wkt>PROJCRS["WGS 84 / Pseudo-Mercator",BASEGEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4326]],CONVERSION["Popular Visualisation Pseudo-Mercator",METHOD["Popular Visualisation Pseudo Mercator",ID["EPSG",1024]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["False easting",0,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["easting (X)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["World - 85°S to 85°N"],BBOX[-85.06,-180,85.06,180]],ID["EPSG",3857]]</wkt>
+      <proj4>+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs</proj4>
+      <srsid>3857</srsid>
+      <srid>3857</srid>
+      <authid>EPSG:3857</authid>
+      <description>WGS 84 / Pseudo-Mercator</description>
+      <projectionacronym>merc</projectionacronym>
+      <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+      <geographicflag>false</geographicflag>
+    </spatialrefsys>
+  </crs>
+  <extent>
+    <spatial maxz="0" maxx="-13791457.58559999987483025" minz="0" miny="5771792.22549999970942736" dimensions="2" minx="-13799085.69470000080764294" crs="EPSG:3857" maxy="5783461.68520000018179417"/>
+    <temporal>
+      <period>
+        <start></start>
+        <end></end>
+      </period>
+    </temporal>
+  </extent>
+</qgis>
