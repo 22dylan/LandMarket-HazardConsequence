@@ -1,0 +1,12 @@
+Variable,Value
+n_years,40
+n_sims,10
+hazard_recurrence,1000
+seed,1337
+luc_initial,10
+luc_growthrate,0
+luc_radius_m,50
+suitability_radius_m,250
+parcel_inertia,2
+stochastic_alpha,2.5
+nghbr_weight,0.1

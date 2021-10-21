@@ -1,0 +1,9 @@
+# gitignore file for github directory pyincore_notebooks
+
+/examples
+/literature_review
+/meetings
+/misc_data
+/plotting
+/model/model_out
+/model/temp
