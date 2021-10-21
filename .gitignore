@@ -7,3 +7,6 @@
 /plotting
 /model/model_out
 /model/temp
+/model/model_in
+!model/model_in/S0_StatusQuo_CSZ40_MC100
+!model/model_in/S0_testbed
