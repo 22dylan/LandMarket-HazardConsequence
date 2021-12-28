@@ -1,12 +1,4 @@
-module misc_func
-
-using Agents
-using DataFrames
-using CSV
-using PyCall
-using ProgressMeter
-
-# module for miscellaneous options
+# file for miscellaneous functions
 
 
 function read_input_folder(path::String)
@@ -49,19 +41,6 @@ function write_out(data, model_runname, filename)
 	
 end
 
-function gdf_from_subdirectory(path::String, d::String)
-	all_in_dir = readdir(joinpath(path, d))
-	for f in all_in_dir
-		if occursin("shp", f)
-			path = joinpath(path, d, f)
-			df = read_shapefile(path)
-			return df
-		end
-	end
-
-
-end
-
 
 function read_csv(f::String)
 	#= reading in CSV file at path "f"
@@ -70,37 +49,23 @@ function read_csv(f::String)
 	return df
 end
 
-function read_shapefile(f::String, return_only_geoms::Bool=false)
-	#= reading in shapefile at path "f"
-	=#
-	table = Shapefile.Table(f)
-	if return_only_geoms==true
-		geoms = Shapefile.shapes(table)
-		return geoms
-	end
-	df = DataFrame(table)
-	return df
+
+"""  
+	setup_pycall()
+setup pyCall with julia distribution of conda
+See Conda.jl for how to install conda pacakages to julia distribution of conda
+See pyCall.jl for additional instructions of using pyton modules
+If adding new packages to Julia's conda environment, may need to run Pkg.build again
+"""	
+function setup_pycall()
+	# ENV["PYTHON"] = ""
+	# Pkg.build("PyCall")
+
+	# preparing python script with misc. python operations that will be used (e.g., incore)
+	scriptdir = @__DIR__
+	pushfirst!(PyVector(pyimport("sys")."path"), scriptdir)
+	pycall_jl = pyimport("PythonOperations")
+	PYTHON_OPS = pycall_jl.misc_python_ops() # setting up python operations
 end
-
-
-
-function length_iter(iter)
-	n=0
-	for i in iter  
-		n+=1
-	end
-	return n
-end
-
-
-# ------------
-end
-
-
-
-
-
-
-
 
 

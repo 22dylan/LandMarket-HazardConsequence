@@ -34,17 +34,19 @@ class misc_python_ops():
 				it to the correct CRS, but I couldn't figure this out.
 			Instead, I'm using geopandas to perform this operation
 		"""
-		shapefile_dict = self.read_input_folder(input_folder, file_tf=False, dirs_tf=True)
-		prcl_df = shapefile_dict['Buildings']
+		inputfile_dict = self.read_input_folder(input_folder, file_tf=True, dirs_tf=True)
+
+		prcl_df = inputfile_dict['Buildings']
 		prcl_df.set_index('guid', inplace=True)
 
-		prcl_df = self.distance_calcs(input_dict=shapefile_dict, prcl_df=prcl_df, feature='Beach', col_name='d_coast')
-		prcl_df = self.distance_calcs(input_dict=shapefile_dict, prcl_df=prcl_df, feature='GreenSpace', col_name='d_grnspc')
-		prcl_df = self.distance_calcs(input_dict=shapefile_dict, prcl_df=prcl_df, feature='Roads1', col_name='d_road1')
+		prcl_df = self.distance_calcs(input_dict=inputfile_dict, prcl_df=prcl_df, feature='CommunityAssets', col_name='d_commasst')
+		prcl_df = self.distance_calcs(input_dict=inputfile_dict, prcl_df=prcl_df, feature='Beach', col_name='d_coast')
+		prcl_df = self.distance_calcs(input_dict=inputfile_dict, prcl_df=prcl_df, feature='GreenSpace', col_name='d_grnspc')
+		prcl_df['d_commasst'] = prcl_df[['d_commasst','d_grnspc']].min(axis=1)
 
 		prcl_df["year_built"] 
 
-		zones = shapefile_dict['Zoning'].copy()
+		zones = inputfile_dict['Zoning'].copy()
 
 		prcl_df['zone'] = 0
 		prcl_df['zone_type'] = 0
@@ -64,8 +66,7 @@ class misc_python_ops():
 		hua_path_out = os.path.join(self.temp_dir, 'temp_hua')
 		hua_df = self.housing_unit_allocation(seed=seed, result_name=hua_path_out)
 		prcl_df = pd.merge(prcl_df, hua_df, how='left', left_index=True, right_index=True)
-		prcl_df = self.assign_property_types(prcl_df)
-
+		prcl_df = self.assign_property_types(prcl_df, comm_bldgs=inputfile_dict['DataAxelCommericalBuildingMapping_drs'])
 
 		# normalizing the location of all parcels
 		# prcl_df, space_conv = self.normalize_loc(prcl_df)
@@ -73,11 +74,10 @@ class misc_python_ops():
 		prcl_df['y'] = prcl_df.geometry.y
 
 		prcl_df.reset_index(inplace=True)
-		cols = ['guid', 'struct_typ', 'year_built', 'no_stories', 'dgn_lvl', 
-				'd_coast', 'd_grnspc', 'd_road1', 'zone', 'zone_type', 'numprec',
-				'landuse', 'owner_type', 'x', 'y']
+		cols = ['guid', 'struct_typ', 'year_built', 'no_stories', 'dgn_lvl',
+				'd_commasst', 'd_coast', 'zone', 'zone_type', 
+				'numprec', 'landuse', 'owner_type', 'max_n_agents', 'x', 'y']
 		prcl_df = prcl_df[cols]
-
 		return prcl_df
 
 
@@ -220,7 +220,7 @@ class misc_python_ops():
 		return hua_df
 
 
-	def assign_property_types(self, hua_df):
+	def assign_property_types(self, hua_df, comm_bldgs=None):
 		""" 
 		assigning initial land use types based on housing unit allocation (hua)
 		
@@ -229,8 +229,8 @@ class misc_python_ops():
 			- owned residential 				(owned_res)
 			- rental residential 				(rentl_res)
 			- low occupancy seasonal rental 	(losr)
-			- high occupancy residential 		(ho_res)
-			- commercial 						(comm)
+			- high occupancy residential 		(hor)
+			- commercial 						(commercial)
 			- high occupancy seasonal rental 	(hosr)
 		
 		Keys from HUA used:
@@ -251,30 +251,47 @@ class misc_python_ops():
 		landuse = []		# parcel land use
 		numprec = []		# number of people
 		agnt_typ = []
+		max_n_agents = []
 
 		for index, row in hua_df.iterrows():
+			if index in comm_bldgs['guid'].values:
+				landuse.append('commercial')
+				numprec.append(0)
+				agnt_typ.append('developer')
+				max_n_agents.append(0)
+				continue
+
 			if (row.vacancy==0) & (row.ownershp==1): # ownershp=1: owned
 				landuse.append('owned_res')
 				numprec.append(row.numprec)
 				agnt_typ.append('individual')
+				max_n_agents.append(1)
 
-			elif (row.vacancy==0) & (row.ownershp==2): # ownershp=2: retned
+
+			elif (row.vacancy==0) & (row.ownershp==2): # ownershp=2: rented
 				if row.no_stories <= 2:
 					landuse.append('rentl_res')
 					agnt_typ.append('landlord')
+					max_n_agents.append(2)
+
 				else:
 					landuse.append('hor')
 					agnt_typ.append('developer')
+					max_n_agents.append(10)
+
 				numprec.append(row.numprec)
 
 			elif (row.vacancy==0) & (row.ownershp==3): # ownershp=3: seasonal rental
 				if row.no_stories <= 2:
 					landuse.append('losr')
 					agnt_typ.append('landlord')
+					max_n_agents.append(1)
+
 
 				else:
 					landuse.append('hosr')
 					agnt_typ.append('developer')
+					max_n_agents.append(1)
 
 				numprec.append(row.numprec)
 
@@ -282,25 +299,29 @@ class misc_python_ops():
 				landuse.append('hor')
 				numprec.append(row.numprec)
 				agnt_typ.append('developer')
+				max_n_agents.append(10)
+
 
 			# --- following are vacant; ensure nobody is in property
 			elif (row.vacancy==1): # for rent
 				landuse.append('unoccupied')
 				numprec.append(0)
 				agnt_typ.append('unocc_owner')
-				# if row.no_stories <= 2:
-				# 	agnt_typ.append('landlord')
-				# else:
-				# 	agnt_typ.append('developer')
+				max_n_agents.append(0)
+
 
 
 			elif (row.vacancy==2): # rented, unoccupied
 				if row.no_stories <= 2:
 					landuse.append('rentl_res')
 					agnt_typ.append('landlord')
+					max_n_agents.append(2)
+
 				else:
 					landuse.append('hor')
 					agnt_typ.append('developer')
+					max_n_agents.append(10)
+
 
 				numprec.append(0)
 
@@ -308,19 +329,27 @@ class misc_python_ops():
 				landuse.append('unoccupied')
 				numprec.append(0)
 				agnt_typ.append('unocc_owner')
+				max_n_agents.append(0)
+
 
 			elif (row.vacancy == 4):	# sold, unoccupied
 				landuse.append('owned_res')
 				numprec.append(0)
 				agnt_typ.append('individual')
+				max_n_agents.append(1)
+
 
 			elif (row.vacancy==5):	# seasonal/recreational use
 				if row.no_stories <= 2:
 					landuse.append('losr')
 					agnt_typ.append('landlord')
+					max_n_agents.append(2)
+
 				else:
 					agnt_typ.append('developer')
 					landuse.append('hosr')
+					max_n_agents.append(1)
+
 
 				numprec.append(0)
 
@@ -328,32 +357,51 @@ class misc_python_ops():
 				if row.no_stories <= 2:
 					landuse.append('losr')
 					agnt_typ.append('landlord')
+					max_n_agents.append(1)
+
 				else:
 					agnt_typ.append('developer')
 					landuse.append('hosr')
+					max_n_agents.append(1)
+
 				numprec.append(0)
 
 			elif (row.vacancy==7):	# other vacant
 				landuse.append('unoccupied')
 				numprec.append(0)
 				agnt_typ.append("unocc_owner")
+				max_n_agents.append(0)
+
 
 
 			# --- if vacancy is nan; assuming non-residential
-			elif row.vacancy != row.vacancy:	# check (pythonically) if vacancy is nan
-				landuse.append('commercial')
-				numprec.append(0)
-				agnt_typ.append('developer')
+			elif row.vacancy != row.vacancy:	# check (pythonically) if vacancy is nan				
+				if row.no_stories > 2:
+					landuse.append("hor")
+					numprec.append(0)
+					agnt_typ.append("developer")
+					max_n_agents.append(10)
+
+				else:
+					landuse.append("owned_res")
+					numprec.append(0)
+					agnt_typ.append("individual")
+					max_n_agents.append(1)
 
 			else:
 				landuse.append('unoccupied')
 				numprec.append(0)
 				agnt_typ.append("unocc_owner")
-				
+				max_n_agents.append(0)
+
+
 
 		hua_df['landuse'] = landuse
 		hua_df['numprec'] = numprec
 		hua_df['owner_type'] = agnt_typ
+		hua_df['max_n_agents'] = max_n_agents
+		print(hua_df['landuse'].value_counts())
+
 		return hua_df
 
 	def makedir(self, path):

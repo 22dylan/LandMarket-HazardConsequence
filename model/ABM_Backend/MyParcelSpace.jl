@@ -1,54 +1,26 @@
 #=
-This file establishes the agent-space interaction API.
-All space types should implement this API (and obviously be subtypes of `AbstractSpace`)
-Some functions DO NOT need to be implemented for every space, they are space agnostic.
-These functions have complete source code here, while the functions that DO need to
-be implemented for every space have only documentation strings here and an
-error message.
-In short: IMPLEMENT ALL FUNCTIONS IN SECTION "IMPLEMENT", WITH SAME ARGUMENTS!
-In addition to the required functions, a minimal `AbstractAgent` struct with REQUIRED
-fields should be supplied. See the top of src/core/agents.jl for examples.
-TODO: do_checks needs to be updated for each new space type
+File for space actions.
+This was taken from Agents.jl space_interaction_API.jl file:
+	https://github.com/JuliaDynamics/Agents.jl/blob/master/src/core/space_interaction_API.jl
 =#
 
-using Agents
-using DataFrames
-
-export ParcelSpace
-
-
-
-
-
-
-struct ParcelSpace <: Agents.AbstractSpace
-	s::Array{Vector{Int},1}							# agent id associated with the parcel
-	
-	landuse::Array{Vector{String},1}		# land use
-	zone_type::Array{Vector{String},1}	# zone type
-	x::Array{Vector{Float64},1}					# x-location of s
-	y::Array{Vector{Float64},1}					# y-location of s
-	guid::Array{Vector{String},1}				# guid of parcel
-	strct_typ::Array{Vector{String},1} 	# structure type
-	year_built::Array{Vector{Int},1}		# year built
-	no_stories::Array{Vector{Int},1}		# number of stories
-
-	LS_0::Array{Vector{Float64},1}					# monte-carlo damage state
-	LS_1::Array{Vector{Float64},1}					# monte-carlo damage state
-	LS_2::Array{Vector{Float64},1}					# monte-carlo damage state
-	MC_DS::Array{Vector{Int},1}					# monte-carlo damage state
-	
-	d_coast::Array{Vector{Float64},1}		# distance to coast
-	d_road::Array{Vector{Float64},1}		# distance to road
-	d_grnspc::Array{Vector{Float64},1}	# distance to green space
-	nghbrs::Array{Vector{String},1}			# neightbors of parcel
-end
+cnt_u_prcls(model) = count(lu=="unoccupied" for lu in GetParcelsAttribute(model, model.space.landuse))
+cnt_or_prcls(model) = count(lu=="owned_res" for lu in GetParcelsAttribute(model, model.space.landuse))
+cnt_rr_prcls(model) = count(lu=="rentl_res" for lu in GetParcelsAttribute(model, model.space.landuse))
+cnt_losr_prcls(model) = count(lu=="losr" for lu in GetParcelsAttribute(model, model.space.landuse))
+cnt_hor_prcls(model) = count(lu=="hor" for lu in GetParcelsAttribute(model, model.space.landuse))
+cnt_hosr_prcls(model) = count(lu=="hosr" for lu in GetParcelsAttribute(model, model.space.landuse))
+cnt_comm_prcls(model) = count(lu=="commercial" for lu in GetParcelsAttribute(model, model.space.landuse))
 
 
 function ParcelSpace(df::DataFrames.DataFrame, d::Int)	
 	s = Array{Vector{Int},1}(undef, d)
+	OWNER = Array{Vector{Int},1}(undef, d)
 
 	LANDUSE = Array{Vector{String},1}(undef, d)
+	N_AGENTS = Array{Vector{Int},1}(undef, d)
+	MAX_N_AGENTS = Array{Vector{Int},1}(undef, d)
+	N_PEOPLE = Array{Vector{Int},1}(undef, d)
 	ZONE_TYPE = Array{Vector{String},1}(undef, d)
 	Xs = Array{Vector{Float64},1}(undef, d)
 	Ys = Array{Vector{Float64},1}(undef, d)
@@ -62,40 +34,44 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 	LS_2s = Array{Vector{Float64},1}(undef, d)
 	MC_DSs = Array{Vector{Int},1}(undef, d)
 	
-
 	D_COASTs = Array{Vector{Float64},1}(undef, d)
-	D_ROADs = Array{Vector{Float64},1}(undef, d)
-	D_GRNSPCs = Array{Vector{Float64},1}(undef, d)
-	NGHBRSs = Array{Vector{String},1}(undef, d)
+	D_COMMASSTs = Array{Vector{Float64},1}(undef, d)
 
 	for i in eachindex(s)
 		if i <= size(df)[1]
 			p = df[i,:]
+			
 			s[i] = Int[]
+			OWNER[i] = Int[]
 			
-			LANDUSE[i] = String[]
-			ZONE_TYPE[i] = [p["zone_type"]]
-			Xs[i] = [p["x"]]
-			Ys[i] = [p["y"]]
-			GUIDs[i] = [p["guid"]]
-			STRCT_TYPS[i] = [p["struct_typ"]]
-			YEAR_BUILTs[i] = [p["year_built"]]
-			NO_STORIESs[i] = [p["no_stories"]]
+			LANDUSE[i] = String[p["landuse"]]
+			N_AGENTS[i] = Int[1]
+			MAX_N_AGENTS[i] = Int[p["max_n_agents"]]
+			N_PEOPLE[i] = Int[p["numprec"]]
+			ZONE_TYPE[i] = String[p["zone_type"]]
+			Xs[i] = Float64[p["x"]]
+			Ys[i] = Float64[p["y"]]
+			GUIDs[i] = String[p["guid"]]
+			STRCT_TYPS[i] = String[p["struct_typ"]]
+			YEAR_BUILTs[i] = Int[p["year_built"]]
+			NO_STORIESs[i] = Int[p["no_stories"]]
 			
-			LS_0s[i] = [0]
-			LS_1s[i] = [0]
-			LS_2s[i] = [0]
-			MC_DSs[i] = [0]
+			LS_0s[i] = Float64[0.0]
+			LS_1s[i] = Float64[0.0]
+			LS_2s[i] = Float64[0.0]
+			MC_DSs[i] = Float64[0.0]
 
-			D_COASTs[i] = [p["d_coast"]]
-			D_ROADs[i] = [p["d_road1"]]
-			D_GRNSPCs[i] = [p["d_grnspc"]]
-			NGHBRSs[i] = String[]
+			D_COASTs[i] = Float64[p["d_coast"]]
+			D_COMMASSTs[i] = Float64[p["d_commasst"]]
 		
 		else
 			s[i] = Int[]
+			OWNER[i] = Int[]
 			
-			LANDUSE[i] = ["none"]
+			LANDUSE[i] = String["none"]
+			N_AGENTS[i] = Int[]
+			MAX_N_AGENTS[i] = Int[]
+			N_PEOPLE[i] = Int[]
 			ZONE_TYPE[i] = ["none"]
 			Xs[i] = Float64[]
 			Ys[i] = Float64[]
@@ -110,47 +86,49 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 			MC_DSs[i] = Int[]
 
 			D_COASTs[i] = Float64[]
-			D_ROADs[i] = Float64[]
-			D_GRNSPCs[i] = Float64[]
-			NGHBRSs[i] = String[]
+			D_COMMASSTs[i] = Float64[]
 		end
 
 	end
 
 	PS = ParcelSpace(
-									s, 
+					s=s, 
+					owner=OWNER,
 
-									LANDUSE, 
-									ZONE_TYPE,
-									Xs, 
-									Ys, 
-									GUIDs, 
-									STRCT_TYPS,
-									YEAR_BUILTs,
-									NO_STORIESs,
+					landuse=LANDUSE, 
+					n_agents=N_AGENTS,
+					max_n_agents=MAX_N_AGENTS,
+					n_people=N_PEOPLE,
 
-									LS_0s,
-									LS_1s,
-									LS_2s,
-									MC_DSs, 
+					zone_type=ZONE_TYPE,
+					x=Xs, 
+					y=Ys, 
+					guid=GUIDs, 
+					strct_typ=STRCT_TYPS,
+					year_built=YEAR_BUILTs,
+					no_stories=NO_STORIESs,
 
-									D_COASTs, 
-									D_ROADs, 
-									D_GRNSPCs, 
-									NGHBRSs, 
-								)
+					LS_0=LS_0s,
+					LS_1=LS_1s,
+					LS_2=LS_2s,
+					MC_DS=MC_DSs, 
+
+					d_coast=D_COASTs, 
+					d_commasst=D_COMMASSTs,
+				)
 	return PS
 end
 
 
 function GetNeighbors(p)
-	#= TODO: add this function
-	=#
 	nothing
 end
 
-pos2cell(pos::String, model::ABM) = findfirst(x->x==[pos], model.space.guid)
+
+pos2cell(pos::String, vector::Vector) = findfirst(isequal(pos), vector)
+pos2cell(pos::String, model::ABM) = pos2cell(pos, vcat(model.space.guid...))
 pos2cell(a::AbstractAgent, model::ABM) = pos2cell(a.pos, model)
+
 
 notimplemented(model) = error("Not implemented for space type $(nameof(typeof(model.space)))")
 
@@ -164,30 +142,50 @@ Move agent to the given position, or to a random one if a position is not given.
 `pos` must have the appropriate position type depending on the space type.
 The agent's position is updated to match `pos` after the move.
 """
-move_agent!(agent, pos, model) = notimplemented(model)
-
-
-""" 
-	GetAgentIdsInParcel(model)
-Gets the agent id associated with each parcel. 
-"""
-function GetAgentIdsInParcel(model::ABM{<:ParcelSpace, A}) where {A<:AbstractAgent}
-	IDs = Int[]
-	for i = 1:length(model.space.s)
-		if occursin("none", model.space.guid[i][1]) == false
-			push!(IDs, model.space.s[i][1])
-		end
-	end
-	return IDs
+function move_agent!(agent, pos, model)
+	remove_agent_from_space!(agent, model)
+	agent.pos = pos
+	add_agent_pos!(agent, model)
 end
 
 
-function GetAgentIdsInParcel(model::ABM, parcels::AbstractArray)
-	IDs = Int[]
-	for prcl in parcels
-		push!(IDs, model.space.s[pos2cell(prcl, model)][1])
+"""
+	_loop_agent_ids!(model, model_field, agent_ids, attrs)
+Loops through agent_ids on the model_field. appends values to 'attrs'
+'attrs' must be pre-allocated
+"""
+function _loop_agent_ids!(model, model_field, agent_ids, attrs)
+	guid_vec = vcat(model.space.guid...)
+	for i in eachindex(agent_ids)
+		attrs[i] = model_field[pos2cell(model[agent_ids[i][1]].pos, guid_vec)][1]
+		# attrs[i] = model_field[pos2cell(model[agent_ids[i][1]].pos, model)][1]
 	end
-	return IDs
+end
+
+
+
+"""
+	_loop_parcels!(model, model_field, agent_ids, attrs)
+Loops through parcels in the model. appends values to 'attrs'
+'attrs' must be pre-allocated
+"""
+function _loop_parcels!(model, model_field::Vector{Vector{T}}, attrs::Vector{T}) where T
+	guid_vec = vcat(model.space.guid...)
+	for i = 1:model.n_prcls
+		attrs[i] = model_field[pos2cell(model.space.guid[i][1], guid_vec)][1]
+	end
+end
+
+function _loop_nonParcels!(model, model_field::Vector{Vector{T}}, attrs::Vector{T}) where T
+	cnt = 1
+	for i = model.n_prcls+1:length(model.space.s)
+		if model.space.s[i] != []
+			attrs[cnt] = model_field[i][1]
+		else
+			attrs[cnt] = 0.0
+		end
+		cnt+=1
+	end
 end
 
 
@@ -199,17 +197,27 @@ First checks non-parcel spaces
 Second checks if non-parcel space has an agent
 """
 function GetAgentIdsNotInParcel(model::ABM{<:ParcelSpace, A}) where {A<:AbstractAgent}
-	IDs = Int[]
-	for i = 1:length(model.space.s)
-		if occursin("none", model.space.guid[i][1]) == true
-			if model.space.s[i] != []
-				push!(IDs, model.space.s[i][1])
-			end
-		end
-	end
+	IDs = Vector{Int}(undef, length(model.space.s) - model.n_prcls)
+	_loop_nonParcels!(model, model.space.s, IDs)
+	IDs = IDs[IDs.!=0]
 	return IDs
 end
 
+function GetAgentIdsNotInParcel(model::ABM{<:ParcelSpace, A}, agent_type) where {A<:AbstractAgent}
+	IDs = Vector{Int}(undef, length(model.space.s) - model.n_prcls)
+	_loop_nonParcels!(model, model.space.s, IDs)
+	IDs = IDs[IDs.!=0]
+
+	IDs_type = Int64[]
+	for ID in IDs
+		if typeof(model[ID])==agent_type
+			push!(IDs_type, ID)
+		end
+	end
+	return IDs_type
+end
+
+count_agnt_types(model, agent_type) = count(i->(typeof(i.second)==agent_type), model.agents)
 
 """
 	GetParcelAttributes(model::ABM, prcl::String)
@@ -222,69 +230,92 @@ end
 
 """
 	GetParcelsAttribute(model, model_field, prcl)
-Returns array of attributes asssociated with parcels in 
+Returns array of attributes asssociated with parcels in either agent_ids or prcls
 """
-function GetParcelsAttribute(model::ABM, model_field::AbstractArray, agent_ids::Vector{Int})
-	attrs = []
-	for agent_id in agent_ids
-		push!(attrs, model_field[pos2cell(model[agent_id[1]].pos, model)][1])
-	end
+function GetParcelsAttribute(model::ABM, model_field::Vector{Vector{T}}, agent_ids::Vector{Int}) where {T<:Real}
+	attrs = Vector{T}(undef, length(agent_ids))
+	_loop_agent_ids!(model, model_field, agent_ids, attrs)
 	return attrs
 end
 
-function GetParcelsAttribute(model::ABM, model_field::AbstractArray, prcls::Vector{String})
-	attrs = []
-	for guid in prcls
-		push!(attrs, model_field[pos2cell(guid, model)][1])
-	end
+function GetParcelsAttribute(model::ABM, model_field::Vector{Vector{String}}, agent_ids::Vector{Int})
+	attrs = Vector{String}(undef, length(agent_ids))
+	_loop_agent_ids!(model, model_field, agent_ids, attrs)
 	return attrs
 end
 
-"""
-	GetAllParcelAttributes(model::ABM, prcl::String)
-Function to return all attributes associated with a parcel
-"""
-function GetAllParcelAttributes(model::ABM, model_field::AbstractArray)
-	attrs = []
-	for guid in model.space.guid
-		if occursin("none", guid[1]) == false
-			push!(attrs, model_field[pos2cell(guid[1], model)][1])
-		end
-	end
+function GetParcelsAttribute(model::ABM, model_field::Vector{Vector{T}}) where {T<:Real}
+	attrs = Vector{T}(undef, model.n_prcls)
+	_loop_parcels!(model, model_field, attrs)
 	return attrs
 end
 
+function GetParcelsAttribute(model::ABM, model_field::Vector{Vector{String}})
+	attrs = Vector{String}(undef, model.n_prcls)
+	_loop_parcels!(model, model_field, attrs)
+	return attrs
+end
 
 
 """
 	remove_agent_from_space!(agent, model)
 Remove the agent from the underlying space structure.
 This function is called after the agent is already removed from the model dictionary
-This function is NOT part of the public API.
 """
-function remove_agent_from_space!(a::AbstractAgent, model::ABM)
-	model.space.s[pos2cell(a, model)] = []
+function remove_agent_from_space!(a::A, model::ABM{<:ParcelSpace,A}) where {A<:AbstractAgent}
+	idx = pos2cell(a.pos, model)
+	deleteat!(model.space.s[idx], model.space.s[idx] .== a.id)
+	deleteat!(model.space.owner[idx], model.space.owner[idx] .== a.id)
+	return a
 end
 
 
 """
-	switch_agent_pos!(agent1, agent2, model)
+	simulate_parcel_transaction!(agent1, agent2, model)
+agent1->seller, agent2->bidder
 switches the 2 agents positions.
 e.g. simulate parcel transaction 
 """
-function switch_agent_pos!(agent1::AbstractAgent, agent2::AbstractAgent, model::ABM)
+function simulate_parcel_transaction!(agent1::AbstractAgent, agent2::AbstractAgent, model::ABM)
+	a1_pos = agent1.pos 	# parcel that is being traded
+	
+	remove_agent_from_space!(agent2, model)	# removing agent2 from it's current position in the model
+	agent2.pos = a1_pos		# udpating agent2's position
+
+	kill_agent!(agent1, model)		# removes agent1 (seller) from model
+	add_agent_pos_owner!(agent2, model)	# adds agent2 (buyer) to model
+end
+
+
+
+"""
+	simulate_parcel_transaction!(agent1::LandlordAgent, agent2::IndividualAgent, model)
+if agent1 is a LandlordAgent and agent2 is an IndividualAgent, 
+then this function adds agent2 to the parcel that agent1 owns.
+e.g., agent2 is renting from agent1.
+"""
+function simulate_parcel_transaction!(agent1::LandlordAgent, agent2::IndividualAgent, model::ABM)
 	a1_pos = agent1.pos
 	a2_pos = agent2.pos
-
-	remove_agent_from_space!(agent1, model)
 	remove_agent_from_space!(agent2, model)
-
-	agent1.pos = a2_pos
 	agent2.pos = a1_pos
-
-	add_agent_to_space!(agent1, model)
-	add_agent_to_space!(agent2, model)
+	add_agent_pos_renter!(agent2, model)
 end
+
+"""
+	simulate_parcel_transaction!(agent1::DeveloperAgent, agent2::IndividualAgent, model)
+if agent1 is a DeveloperAgent and agent2 is an IndividualAgent, 
+then this function adds agent2 to the parcel that agent1 owns.
+e.g., agent2 is renting from agent1.
+"""
+function simulate_parcel_transaction!(agent1::DeveloperAgent, agent2::IndividualAgent, model::ABM)
+	a1_pos = agent1.pos
+	a2_pos = agent2.pos
+	remove_agent_from_space!(agent2, model)
+	agent2.pos = a1_pos
+	add_agent_pos_renter!(agent2, model)
+end
+
 
 #######################################################################################
 # %% IMPLEMENT: Neighbors and stuff
@@ -345,7 +376,7 @@ nearby_positions(position, model, r = 1) = notimplemented(model)
 	kill_agent!(id::Int, model::ABM)
 Remove an agent from the model.
 """
-function kill_agent!(a::AbstractAgent, model::ABM)
+function kill_agent!(a::A, model::ABM) where {A<:AbstractAgent}
 	delete!(model.agents, a.id)
 	remove_agent_from_space!(a, model)
 end
@@ -394,37 +425,195 @@ Add the agent to the `model` at the agent's own position.
 """
 function add_agent_pos!(agent::AbstractAgent, model::ABM)
 	model[agent.id] = agent
-	add_agent_to_space!(agent, model)
+	_add_agent_to_space!(agent, model)
 	return agent
 end
 
 """
-	add_agent_to_space!(agent, model)
+	_add_agent_to_space!(agent, model)
 Add the agent to the underlying space structure at the agent's own position.
 """
-function add_agent_to_space!(a::A, model::ABM{<:ParcelSpace,A}) where {A<:AbstractAgent}
+function _add_agent_to_space!(a::AbstractAgent, model::ABM)
 	push!(model.space.s[pos2cell(a.pos, model)], a.id)
 end
 
-function add_agent_to_space!(a::AbstractAgent, model::ABM)
-	push!(model.space.s[pos2cell(a.pos, model)], a.id)
+
+"""
+	add_agent_pos!(agent::AbstractAgent, model::ABM) → agent
+Add the agent to the `model` at the agent's own position.
+if 'init' is true/present, then the agent is simply added
+if 'init' not present, then the landuse is updated (e.g., it's not the first time 'add_agent_pos' is called)
+if it's a landlord agent, check whethe landuse is initially 'rental_res' or 'losr'
+	if 'rental_res', then add an individual agent to the same space
+"""
+function add_agent_pos_owner!(agent::AbstractAgent, model::ABM; init::Bool)
+	model[agent.id] = agent
+	agent.own_parcel = true
+	_add_agent_to_space_owner!(agent, model)
+	return agent
 end
 
+function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool)
+	model[agent.id] = agent 		# adding agent to model
+	agent.own_parcel = true			# does the landlord agent own the parcel
+	_add_agent_to_space_owner!(agent, model) 	# adding landlord agent to model space
+
+	# is the property initiated as rentl_res or losr?
+	cell_idx = pos2cell(agent.pos, model)
+	lu_init = model.space.landuse[cell_idx][1]
+
+	# if rentl_res, then assume another agent is renting (model starts in equlibrium)
+	if lu_init == "rentl_res"
+		id = next_avail_id(model)
+		pos = agent.pos
+		a2 = IndividualAgent(
+			id=id,
+			pos=pos,
+			alpha1=model.Individual_alpha1,
+			alpha2=model.Individual_alpha2,
+			alpha3=model.Individual_alpha3,
+			budget=rand(model.rng, model.Individual_budget_dist, 1)[1],
+			price_goods=model.Individual_price_goods,
+			number_prcls_aware=model.Individual_number_parcels_aware,
+			prcl_on_mrkt=false,
+			looking_to_purchase=false,
+			WTA=model.Individual_WTA,
+			age=age_calc(model.Individual_age_dist, model),
+			own_parcel=false,
+			num_people=npeople_calc(model.Individual_nhousehold_dist, model),
+		)
+		add_agent_pos_renter!(a2, model)
+	end
+	return agent
+end
+
+function add_agent_pos_owner!(agent::DeveloperAgent, model::ABM; init::Bool)
+	model[agent.id] = agent 		# adding agent to model
+	agent.own_parcel = true			# does the landlord agent own the parcel
+	_add_agent_to_space_owner!(agent, model) 	# adding landlord agent to model space
+
+	# is the property initiated as rentl_res or losr?
+	cell_idx = pos2cell(agent.pos, model)
+	lu_init = model.space.landuse[cell_idx][1]
+
+	# if hor, then assume agents are renting (model starts in equlibrium)
+	if lu_init == "hor"
+		max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos)
+		for i = 1:max_n_agents[1]-1
+			id = next_avail_id(model)
+			pos = agent.pos
+			a2 = IndividualAgent(
+				id=id,
+				pos=pos,
+				alpha1=model.Individual_alpha1,
+				alpha2=model.Individual_alpha2,
+				alpha3=model.Individual_alpha3,
+				budget=rand(model.rng, model.Individual_budget_dist, 1)[1],
+				price_goods=model.Individual_price_goods,
+				number_prcls_aware=model.Individual_number_parcels_aware,
+				prcl_on_mrkt=false,
+				looking_to_purchase=false,
+				WTA=model.Individual_WTA,
+				age=age_calc(model.Individual_age_dist, model),
+				own_parcel=false,
+				num_people=npeople_calc(model.Individual_nhousehold_dist, model),
+			)
+			add_agent_pos_renter!(a2, model)
+		end
+	end
+	return agent
+end
+
+function add_agent_pos_owner!(agent::AbstractAgent, model::ABM)
+	model[agent.id] = agent
+	agent.own_parcel = true
+	_add_agent_to_space_owner!(agent, model)
+	agent_update_landuse_step!(agent, model)
+	return agent
+end
+
+function add_agent_pos_owner!(agent::LandlordAgent, model::ABM)
+	model[agent.id] = agent
+	agent.own_parcel = true
+	_add_agent_to_space_owner!(agent, model)
+	agent_update_landuse_step!(agent, model)
+	return agent
+end
+
+
+function add_agent_pos_owner!(agent::DeveloperAgent, model::ABM)
+	model[agent.id] = agent
+	agent.own_parcel = true
+	_add_agent_to_space_owner!(agent, model)
+	agent_update_landuse_step!(agent, model)
+	return agent
+end
+
+function add_agent_pos_renter!(agent::IndividualAgent, model::ABM)
+	model[agent.id] = agent
+	agent.own_parcel = false
+	_add_agent_to_space_renter!(agent, model)
+	return agent
+end
+
+
+"""
+	_add_agent_to_space_owner!(agent, model)
+Add the agent to the underlying space structure at the agent's own position.
+"""
+function _add_agent_to_space_owner!(a::A, model::ABM{<:ParcelSpace,A}) where {A<:AbstractAgent}
+	cell_idx = pos2cell(a.pos, model)
+	model.space.s[cell_idx] = [a.id]
+	model.space.owner[cell_idx] = [a.id]
+end
+
+
+function _add_agent_to_space_renter!(a::IndividualAgent, model::ABM)
+	cell_idx = pos2cell(a.pos, model)
+	push!(model.space.s[cell_idx], a.id)
+end
 """
 	next_avail_pos(model)
 returns the next available position in the model space
 Checks for empty spaces in 's' and returns this index
 """
 function next_avail_pos(model::ABM{<:ParcelSpace})
-	s = findfirst(x->x==[], model.space.s)
+	s = findfirst(isequal([]), model.space.s)
 	return convert(Int, s)
 end
 
 
+"""
+	next_avail_id(model)
+returns the next available id in the model space
+"""
+function next_avail_id(model::ABM{<:ParcelSpace})
+	id = maximum(allids(model)) + 1
+	return convert(Int, id)
+end
+
+
+"""
+	update_landuse!(agent, mdoel, landuse)
+updates the landuse associated with the parcel
+"""
 function update_landuse!(agent::AbstractAgent, model::ABM, landuse::Vector{String})
 	cell_idx = pos2cell(agent, model)
-	model.space.landuse[pos2cell(agent, model)] = landuse
+	model.space.landuse[cell_idx] = landuse
+	if landuse == ["owned_res"]
+		model.space.max_n_agents[cell_idx] = [1]
+	elseif landuse==["rentl_res"]
+		model.space.max_n_agents[cell_idx] = [2]
+	elseif landuse==["losr"]
+		model.space.max_n_agents[cell_idx] = [1]
+	elseif landuse==["hor"]
+		model.space.max_n_agents[cell_idx] = [10]	# todo: figure out how big this should be
+
+	end
+
 end
+
+
 
 
 """ UpdateParcelAttr!()
@@ -489,3 +678,8 @@ function mc_sample(LS_0, LS_1, LS_2, model)::Int64
 	return DS
 
 end
+
+
+
+
+
