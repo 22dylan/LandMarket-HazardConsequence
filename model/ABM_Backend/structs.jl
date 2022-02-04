@@ -13,47 +13,38 @@ Base.@kwdef mutable struct Parameters
 	progress_bar::Progress 
 	n_prcls::Int64
 
+	nhousehold_dist::Distribution
+	nvisitor_dist::Distribution
+	Household_alphas
+	Visitor_alphas
+
+	age_dist::Distribution
+
 	# Unoccupied owner agent
-	Unoccupied_WTA::Float64
+	Unoccupied_budget
+	Unoccupied_price_goods::Float64
 
 	# Individual/Household agent
-	Individual_WTA::Float64
-	Individual_alpha1::Float64
-	Individual_alpha2::Float64
-	Individual_alpha3::Float64
-	Individual_budget_dist::Distribution
+	Individual_budget
 	Individual_price_goods::Float64
 	Individual_number_parcels_aware::Int64
-	Individual_age_dist::Distribution
-	Individual_nhousehold_dist::Distribution
+	Individual_household_change_dist::Distribution
+
+	# Visitor agent
+	Visitor_number_parcels_aware::Int64 = 0
 
 	# Landlord agent
-	Landlord_WTA::Float64
-	Landlord_RR_alpha1::Float64
-	Landlord_RR_alpha2::Float64
-	Landlord_RR_alpha3::Float64
-	Landlord_LOSR_alpha1::Float64
-	Landlord_LOSR_alpha2::Float64
-	Landlord_LOSR_alpha3::Float64
-	Landlord_budget_dist::Distribution
+	Landlord_budget
 	Landlord_price_goods::Float64
 	Landlord_number_parcels_aware::Int64
 	Landlord_number_searching::Int64
-	Landlord_age_dist::Distribution
-	Landlord_transition_penalty::Int64
+	Landlord_transition_penalty::Float64
 
-	# Develoepr agent
-	Developer_WTA::Float64
-	Developer_HOR_alpha1::Float64
-	Developer_HOR_alpha2::Float64
-	Developer_HOR_alpha3::Float64
-	Developer_HOSR_alpha1::Float64
-	Developer_HOSR_alpha2::Float64
-	Developer_HOSR_alpha3::Float64
-	Developer_budget_dist::Distribution
-	Developer_price_goods::Float64
-	Developer_number_parcels_aware::Int64
-	Developer_number_searching::Int64
+	# Company agent
+	Company_budget
+	Company_price_goods::Float64
+	Company_number_parcels_aware::Int64
+	Company_number_searching::Int64
 	
 	# people counts/population growth
 	FullTimeResident_growth_rate::Float64
@@ -62,35 +53,37 @@ Base.@kwdef mutable struct Parameters
 	FullTimeResidents_inparcel::Int64 = 0
 	FullTimeResidents_searching::Int64 = 0
 	FullTimeResidents_total::Int64 = 0
+	FullTimeResidents_vacancy::Int64 = 0
 
+	# visitor counts/growth
 	Visitor_growth_rate::Float64
 	Visitor_carrying_cap::Float64
-	Visitor_init::Float64 = 0	
-	Visitor_total::Int64 = 0
-
+	Visitor_init::Float64 = 0
+	Visitors_inparcel::Int64 = 0
+	Visitors_searching::Int64 = 0
+	Visitors_total::Int64 = 0
+	Visitors_vacancy::Int64 = 0
 
 	# agent counts
-	n_unoccupied_init::Int64 = 0
 	n_unoccupied_inparcel::Int64 = 0
 	n_unoccupied_searching::Int64 = 0
 	n_unoccupied_total::Int64 = 0
 
-	n_individuals_init::Int64 = 0
 	n_individuals_inparcel::Int64 = 0
 	n_individuals_searching::Int64 = 0
 	n_individuals_total::Int64 = 0
 
-	n_landlords_init::Int64 = 0
 	n_landlords_inparcel::Int64 = 0
 	n_landlords_searching::Int64 = 0
 	n_landlords_total::Int64 = 0
 
-	n_developers_init::Int64 = 0
-	n_developers_inparcel::Int64 = 0
-	n_developers_searching::Int64 = 0
-	n_developers_total::Int64 = 0
+	n_companies_inparcel::Int64 = 0
+	n_companies_searching::Int64 = 0
+	n_companies_total::Int64 = 0
 
-	n_agents_end_iteration::Int64
+	n_visitoragents_inparcel::Int64 = 0
+	n_visitoragents_searching::Int64 = 0
+	n_visitoragents_total::Int64 = 0
 
 	# parcel counts
 	n_unoccupied::Int64 = 0
@@ -103,13 +96,14 @@ Base.@kwdef mutable struct Parameters
 end
 
 
-
 Base.@kwdef struct ParcelSpace <: Agents.AbstractSpace
 	s::Array{Vector{Int},1}					# agent id(s) in parcel
 	owner::Array{Vector{Int},1}				# agent id that owns parcel
 	
-	landuse::Array{Vector{String},1}		# land use
-	n_agents::Array{Vector{Int},1}			# number of agents associated with parcel (e.g., number of households, landlords, developers)
+	landuse::Array{Vector{String},1}		# landuse
+	prev_landuse::Array{Vector{String},1}	# previous landuse
+	landvalue::Array{Vector{Float64},1}		# landuse
+	n_agents::Array{Vector{Int},1}			# number of agents associated with parcel (e.g., number of households, landlords, companys)
 	max_n_agents::Array{Vector{Int},1}		# maximum number of agents
 	n_people::Array{Vector{Int},1}			# number of people in parcel (actual num. of people)
 
@@ -121,29 +115,35 @@ Base.@kwdef struct ParcelSpace <: Agents.AbstractSpace
 	year_built::Array{Vector{Int},1}		# year built
 	no_stories::Array{Vector{Int},1}		# number of stories
 
-	LS_0::Array{Vector{Float64},1}			# monte-carlo damage state
-	LS_1::Array{Vector{Float64},1}			# monte-carlo damage state
-	LS_2::Array{Vector{Float64},1}			# monte-carlo damage state
+	LS_0::Array{Vector{Float64},1}			# limit state 0
+	LS_1::Array{Vector{Float64},1}			# limit state 1
+	LS_2::Array{Vector{Float64},1}			# limit state 2
+	AVG_DS::Array{Vector{Float64},1}			# average damage state
 	MC_DS::Array{Vector{Int},1}				# monte-carlo damage state
 	
 	d_coast::Array{Vector{Float64},1}		# distance to coast
 	d_commasst::Array{Vector{Float64},1}	# distance to community-asset
+	d_cbd::Array{Vector{Float64},1}	# distance to central business district
 end
 
 
 Base.@kwdef mutable struct UnoccupiedOwnerAgent <: AbstractAgent
 	id::Int
 	pos::String
-	WTA::Float64
+	pos_idx::Int64
+	WTA::Float64 = 0.0
 	prcl_on_mrkt::Bool
+	prcl_on_visitor_mrkt::Bool
 	looking_to_purchase::Bool
 	own_parcel::Bool
-	utility::Float64 = 0
+	utility::Float64 = 0.0
+	bldg_dmg::Float64 = 0.0
 end
 
 Base.@kwdef mutable struct IndividualAgent <: AbstractAgent
-	id::Int
+	id::Int64
 	pos::String
+	pos_idx::Int64
 	alpha1::Float64
 	alpha2::Float64
 	alpha3::Float64
@@ -151,18 +151,27 @@ Base.@kwdef mutable struct IndividualAgent <: AbstractAgent
 	price_goods::Float64
 	number_prcls_aware::Int64
 	prcl_on_mrkt::Bool
+	prcl_on_visitor_mrkt::Bool
 	looking_to_purchase::Bool
-	WTA::Float64
+	WTA::Float64 = 0.0
 	age::Int64
 	own_parcel::Bool
 	num_people::Int64
-	utility::Float64 = 0
+
+	utility::Float64 = 0.0
+	utility_cst::Float64 = 0.0
+	utility_cms::Float64 = 0.0
+	utility_cbd::Float64 = 0.0
+
+	household_change_times::Vector{Int64}
+	bldg_dmg::Float64 = 0.0
 end
 
 
 Base.@kwdef mutable struct LandlordAgent <: AbstractAgent
 	id::Int
 	pos::String
+	pos_idx::Int64
 	alpha1_RR::Float64
 	alpha2_RR::Float64
 	alpha3_RR::Float64
@@ -173,18 +182,21 @@ Base.@kwdef mutable struct LandlordAgent <: AbstractAgent
 	price_goods::Float64
 	number_prcls_aware::Int64
 	prcl_on_mrkt::Bool
+	prcl_on_visitor_mrkt::Bool
 	looking_to_purchase::Bool
-	WTA::Float64
+	WTA::Float64 = 0.0
 	age::Int64
 	own_parcel::Bool
-	transition_penalty::Int64
-	utility::Float64 = 0
+	transition_penalty::Float64
+	utility::Float64 = 0.0
+	bldg_dmg::Float64 = 0.0
 end
 
 
-Base.@kwdef mutable struct DeveloperAgent <: AbstractAgent
+Base.@kwdef mutable struct CompanyAgent <: AbstractAgent
 	id::Int
 	pos::String
+	pos_idx::Int64
 	alpha1_HOR::Float64
 	alpha2_HOR::Float64
 	alpha3_HOR::Float64
@@ -195,10 +207,40 @@ Base.@kwdef mutable struct DeveloperAgent <: AbstractAgent
 	price_goods::Float64
 	number_prcls_aware::Int64
 	prcl_on_mrkt::Bool
+	prcl_on_visitor_mrkt::Bool
 	looking_to_purchase::Bool
-	WTA::Float64
+	WTA::Float64 = 0.0
 	own_parcel::Bool
-	utility::Float64 = 0
+	utility::Float64 = 0.0
+	bldg_dmg::Float64 = 0.0
 end
+
+
+Base.@kwdef mutable struct VisitorAgent <: AbstractAgent
+	id::Int
+	pos::String
+	pos_idx::Int64
+	num_people::Int64
+	number_prcls_aware::Int64
+	alpha1::Float64
+	alpha2::Float64
+	alpha3::Float64
+	
+	utility::Float64 = 0.0
+	utility_cst::Float64 = 0.0
+	utility_cms::Float64 = 0.0
+	utility_cbd::Float64 = 0.0
+
+	bldg_dmg::Float64 = 0.0
+end
+
+
+Base.@kwdef mutable struct RealEstateAgent <: AbstractAgent
+	id::Int
+	pos::String
+	pos_idx::Int64
+end
+
+
 
 

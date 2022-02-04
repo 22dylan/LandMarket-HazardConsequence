@@ -45,7 +45,8 @@ end
 function read_csv(f::String)
 	#= reading in CSV file at path "f"
 	=#
-	df = DataFrame(CSV.File(f))
+	df = DataFrame(CSV.File(f; normalizenames=true))
+	# df = DataFrame(CSV.read(f; normalizenames=true))
 	return df
 end
 

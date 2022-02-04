@@ -3,12 +3,11 @@ using CSV
 using DataFrames
 using Random
 using StatsBase
-using SpecialFunctions
+# using SpecialFunctions
 using Distributions
 using PyCall
 using ProgressMeter
-using PyCall
-using BenchmarkTools
+# using InteractiveUtils
 
 include(joinpath("ABM_Backend", "structs.jl"))
 include(joinpath("ABM_Backend", "MiscFunc.jl"))
@@ -26,18 +25,7 @@ PYTHON_OPS = setup_pycall()
 =#
 
 
-#= 	TODO List:
-	-------------
-	+ group parcels associated with same building together, currently:
-		- multiple parcels associated with a building are classified as HOR
-		- each HOR has a max. occupancy of 10 household agents
-		- each household has on average 2.5 people.
-		- this results in way too many people in the model
-	+ since model slows down with the size of the parcel space, think about if
-	  it makes sense to have a parcel space that is one cell larger than the 
-	  actual number of parcels. In this case, all agents searchign for a parcel
-	  would be associated with the same parcel space cell (e.g., idx=4680)
-=#	
+
 
 
 # ------------
@@ -61,12 +49,25 @@ function main(model_runname)
 
 
 	# identifying which output data to collect for agents
-	adata = [:pos, :age, :prcl_on_mrkt, :own_parcel, :num_people, :utility]
+	adata = [
+			:pos, 
+			:age, 
+			:prcl_on_mrkt, 
+			:own_parcel, 
+			:num_people, 
+			:utility, 		# alpha 1,2,3,4
+			:utility_cst,	# alpha 1
+			:utility_cms,	# alpha 2
+			:utility_cbd,	# alpha 3
+			:budget,
+			:bldg_dmg,
+			]
 
 	sdata = [
 			:s, 
 			:owner,
 			:landuse, 
+			:landvalue, 
 			:n_agents,
 			:max_n_agents,	
 			:n_people,
@@ -103,15 +104,24 @@ function main(model_runname)
 			:n_landlords_searching,
 			:n_landlords_total,
 
-			:n_developers_inparcel,
-			:n_developers_searching,
-			:n_developers_total,
+			:n_companies_inparcel,
+			:n_companies_searching,
+			:n_companies_total,
+
+			:n_visitoragents_inparcel,
+			:n_visitoragents_searching,
+			:n_visitoragents_total,
 
 			# people counts
 			:FullTimeResidents_inparcel,
 			:FullTimeResidents_searching,
 			:FullTimeResidents_total,
-			:Visitor_total,
+			:FullTimeResidents_vacancy,
+			
+			:Visitors_inparcel,
+			:Visitors_searching,
+			:Visitors_total,
+			:Visitors_vacancy
 		
 			]
 
@@ -231,8 +241,9 @@ end
 
 
 # ------------
-model_runname = "S0_testbed_3agents"
-# model_runname = "S0_StatusQuo_3agents"
+# model_runname = "S0_testbed"
+model_runname = "S0_StatusQuo"
+
 println()
 println("Running Model: $model_runname")
 println()

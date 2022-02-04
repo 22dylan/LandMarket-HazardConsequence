@@ -1,0 +1,46 @@
+
+Model TODO List:
+ 
+ ✔ Figure out how to add tourist agents efficiently @done (21-12-31 15:16)
+ ✔ Double check company agent is setup properly @done (22-01-05 17:08)
+ ✔ In full model results: figure out why number of total household agents dips then grows @done (22-01-12 09:02)
+ ✔ Make company market term a function of how badly a hor/hosr are needed; @done (22-01-05 16:36)
+     [] For example, if a company is going to build, ensure it's worth the investment.
+     [] Currently seeing more companies appear in model than is needed (e.g., a lot of vacancies at end of model run)
+ ✔ Change "developer" to a more appropriate term ("firm", "corporation", "agency", etc.) @done (22-01-12 08:15)
+ ✔ Get Seaside population growth rate @done (22-01-07 10:36)
+ ✔ Add citations to powerpoint; where things come from @done (22-01-13 15:05)
+ ✔ Add Haizong's work to model review @done (22-01-17 17:06)
+ ✔ Make spatial plots easier to read @done (22-01-13 15:08)
+ ☐ Setup distribution of number of hotel/apartment rooms for Seaside
+ ☐ Keep daily population changes in mind (e.g., run a day and night simulation)
+ ☐ Change "company" to "business"
+ ✔ Add visitor preferences/utility @done (22-01-19 15:22)
+
+ ✔ Consider adding CBD layer and a distance to CBD in agent preferences @done (22-01-26 16:10)
+ ☐ If company takes over, look into updating structure features (type, num floors, etc.)
+ ☐ Think about how hosr/hor may occupy multiple parcels
+     [] Could keep track of neighboring parcels
+     [] if an unoccupied parcel becomes available, have company make offer to neighbors
+     [] company has larger budget/WTP
+     [] property owner's WTA comes into play
+ ☐ Setup model parameters for what makes sense/looks and feels right
+ ☐ Run model under different policy options
+     ☐ zoning
+     ☐ distance based tax
+     ☐ building codes for new construction
+ ☐ Change "UnoccupiedOwnerAgent" to real estate agent
+     ☐ more complicated WTA calculations
+
+
+Model Ideas:
+ ☐ Paper presenting model/results
+ ☐ Sensitivity analysis of model variables
+ ☐ Validation and Verification of model
+ ☐ Adaptation pathways; implementing polcies in sequence (Barnett et al., 2014)
+
+
+Misc. Ideas:
+ ☐ Think about an "education" alternative. 
+     [] Could shift preferences (e.g., values) as new agents come in to model. 
+     [] For example, educate future generations to put less value on living near the coast

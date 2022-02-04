@@ -5,13 +5,52 @@ count_agnt_types(model, agent_type) = count(i->(typeof(i.second)==agent_type), m
 cnt_UnoccupiedOwner_agnts(model) = count_agnt_types(model, UnoccupiedOwnerAgent)
 cnt_IndividualOwner_agnts(model) = count_agnt_types(model, IndividualAgent)
 cnt_Landlord_agnts(model) = count_agnt_types(model, LandlordAgent)
-cnt_Developer_agnts(model) = count_agnt_types(model, DeveloperAgent)
+cnt_Company_agnts(model) = count_agnt_types(model, CompanyAgent)
+cnt_Visitor_agnts(model) = count_agnt_types(model, VisitorAgent)
 cnt_n_people_parcel(model) = sum(GetParcelsAttribute(model, model.space.n_people))
 
-function cnt_n_people(model)
+function cnt_n_people_parcel(model, agent_type)
 	ppl = 0
 	for a in allagents(model)
-		if typeof(a)==IndividualAgent
+		if typeof(a)==agent_type
+			if agent_type == IndividualAgent
+				if a.pos != "none"
+					ppl += a.num_people
+				end
+			elseif agent_type == VisitorAgent
+				if a.pos != "none_v"
+					ppl += a.num_people
+				end
+			end
+		end
+	end
+	return ppl
+end
+
+
+function cnt_n_people_searching(model, agent_type)
+	ppl = 0
+	for a in allagents(model)
+		if typeof(a)==agent_type
+			if agent_type == IndividualAgent
+				if a.pos == "none"
+					ppl += a.num_people
+				end
+			elseif agent_type == VisitorAgent
+				if a.pos == "none_v"
+					ppl += a.num_people
+				end
+			end
+		end
+	end
+	return ppl
+end
+
+
+function cnt_n_people(model, agent_type)
+	ppl = 0
+	for a in allagents(model)
+		if typeof(a)==agent_type
 			ppl += a.num_people
 		end
 	end
@@ -28,6 +67,70 @@ function agent_step!(agent::UnoccupiedOwnerAgent, model)
 	return agent
 end
 
+function agent_step!(agent::RealEstateAgent, model)
+	prcl_zones = GetParcelsAttribute(model, model.space.zone_type)
+
+
+	Y = 150
+	b = model.Individual_price_goods
+	NB = model.n_landlords_searching + model.n_companies_searching + model.n_individuals_searching #+ model.n_visitoragents_searching
+	NS = model.n_unoccupied
+	eps = eps_calc(NB, NS)
+	for i = 1:model.n_prcls
+		zone = prcl_zones[i]
+		u_H = utility_calc_idx(model, model.Household_alphas, i)
+		u_V = utility_calc_idx(model, model.Visitor_alphas, i)
+		# u = max(u_H, u_V)
+		# lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+		
+		if (zone=="R")				# for individuals and landlords
+			u = u_H
+			# lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+		elseif (zone=="SR")
+			u = u_V
+			# lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+		else
+			u = max(u_H, u_V)
+			# lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+		end
+		lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+		# lv = Y*(1+eps)
+
+		# elseif (zone=="R-SR")		# for individuals and landlords
+		# 	u = max(u_H, u_V)
+		# 	lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+		# elseif (zone == "SR")	| (zone=="C-SR") # for landlords and companies
+		# 	u = u_V
+		# 	# u = max(u_H, u_V)
+		# 	lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+
+		# elseif (zone=="C")			# companies only
+		# 	u = max(u_H, u_V)
+		# 	lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+		
+		# elseif (zone=="C-R") | (zone=="R-SR-C") 	# for individuals, landlords, and companies
+		# 	u = max(u_H, u_V)			
+		# 	lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+
+		# elseif zone=="OS"
+		# 	u = max(u_H, u_V)
+		# 	lv = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
+		# end
+
+		model.space.landvalue[i] = [lv]
+	end 
+
+	return agent
+end
+
 
 function agent_step!(agent::IndividualAgent, model)
 	agent.age+=1 		# aging agent
@@ -35,18 +138,11 @@ function agent_step!(agent::IndividualAgent, model)
 		agent_dies!(agent, model)
 		return
 	end
-
-	if occursin("none", agent.pos) == false		# if agent is in parcel, compute utility
-		agent.utility = utility_calc(model, agent, agent.pos)
+	if model.tick in agent.household_change_times
+		agent.num_people += rand(model.rng, Bool) ? 1 : -1  # randomly getting +/- 1
 	end
-
-	# todo: figure out what household_change_rate should be
-	household_change_rate = 0.00
-	if rand(model.rng) < household_change_rate
-		agent.num_people += rand(Bool) ? 1 : -1  # randomly getting +/- 1
-		if agent.num_people == 0
-			agent_dies!(agent, model)
-		end
+	if agent.num_people <= 0
+		agent_dies!(agent, model)
 	end
 	return agent
 end
@@ -59,19 +155,26 @@ function agent_step!(agent::LandlordAgent, model)
 	end
 
 	# if agent is assigned to parcel; can potentially switch between losr and rentl_res
-	if occursin("none", agent.pos) == false
+	if agent.pos != "none"
 		check_switch_landuse!(agent, model)
-		agent.utility, _ = utility_calc(model, agent, agent.pos)
-
 	end
+
 	return agent
 end
 
-function agent_step!(agent::DeveloperAgent, model)
+function agent_step!(agent::CompanyAgent, model)
 	return agent
 end
 
-
+function agent_step!(agent::VisitorAgent, model)
+	# if agent.pos != "none_v"		# if agent is in parcel, compute utility
+	# 	u_vec = utility_calc_component_idx(model, agent, agent.pos_idx)
+	# 	agent.utility_cst = u_vec[1]
+	# 	agent.utility_cbd = u_vec[2]
+	# 	agent.utility = u_vec[1]*u_vec[2]
+	# end
+	return agent
+end
 
 """
 	agent_on_market_step!(agent, model)
@@ -84,6 +187,7 @@ LandlordAgent:
 """
 function agent_on_market_step!(agent::UnoccupiedOwnerAgent, model)
 	agent.prcl_on_mrkt = true
+	agent.WTA = model.space.landvalue[agent.pos_idx][1]
 end
 
 function agent_on_market_step!(agent::IndividualAgent, model)
@@ -93,13 +197,26 @@ end
 
 
 function agent_on_market_step!(agent::LandlordAgent, model)
-	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos)
-	agents = GetParcelAttribute(model, model.space.s, agent.pos)
-	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos)
+	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos_idx)
+	agents = GetParcelAttribute(model, model.space.s, agent.pos_idx)
+	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos_idx)
 
 	if landuse[1] == "rentl_res"
 		if length(agents) < max_n_agents[1]
 			agent.prcl_on_mrkt = true
+			NB = model.n_individuals_searching
+			# NS = model.n_unoccupied
+			NS = model.FullTimeResidents_vacancy
+			eps = eps_calc(NB, NS)
+
+			# Y = budget_calc(model, model.Individual_budget)
+			Y = 150
+			# Y = mean(model.Individual_budget)
+
+			b = model.Individual_price_goods
+			u = utility_calc_idx(model, model.Household_alphas, agent.pos_idx)
+			agent.WTA = (Y*u^2)/(b^2 + u^2)*(1+eps)
+
 			return agent
 		else
 			agent.prcl_on_mrkt = false
@@ -112,14 +229,26 @@ function agent_on_market_step!(agent::LandlordAgent, model)
 	return agent
 end
 
-function agent_on_market_step!(agent::DeveloperAgent, model)
-	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos)
-	agents = GetParcelAttribute(model, model.space.s, agent.pos)
-	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos)
+function agent_on_market_step!(agent::CompanyAgent, model)
+	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos_idx)
+	agents = GetParcelAttribute(model, model.space.s, agent.pos_idx)
+	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos_idx)
 
 	if landuse[1] == "hor"
 		if length(agents) < max_n_agents[1]
 			agent.prcl_on_mrkt = true
+			NB = model.n_individuals_searching
+			# NS = model.n_unoccupied
+			NS = model.FullTimeResidents_vacancy
+			eps = eps_calc(NB, NS)
+			
+			# Y = budget_calc(model, model.Individual_budget)
+			Y = 150
+			# Y = mean(model.Individual_budget)
+
+			b = model.Individual_price_goods
+			u = utility_calc_idx(model, model.Household_alphas, agent.pos_idx)
+			agent.WTA = (Y*u^2)/(b^2 + u^2)*(1+eps)
 			return agent
 		else
 			agent.prcl_on_mrkt = false
@@ -130,6 +259,70 @@ function agent_on_market_step!(agent::DeveloperAgent, model)
 		return agent
 	end
 end
+
+
+
+"""
+	agent_on_visitor_market_step!(agent, model)
+put parcel on market steps
+Unoccupied: always on market
+individualAgent: Not on market; these get put on market if the agent dies (e.g., parcel becomes unoccupied)
+LandlordAgent: 
+	if rental_res: check whether number of occupying agents are less than max occupancy
+	if losr: not on market 
+"""
+
+function agent_on_visitor_market_step!(agent::UnoccupiedOwnerAgent, model)
+	agent.prcl_on_visitor_mrkt = false
+end
+
+function agent_on_visitor_market_step!(agent::IndividualAgent, model)
+	agent.prcl_on_visitor_mrkt = false
+	return agent
+end
+
+
+function agent_on_visitor_market_step!(agent::LandlordAgent, model)
+	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos_idx)
+	agents = GetParcelAttribute(model, model.space.s, agent.pos_idx)
+	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos_idx)
+	
+	if landuse[1] == "losr"
+		if length(agents) < max_n_agents[1]
+			agent.prcl_on_visitor_mrkt = true
+			return agent
+		else
+			agent.prcl_on_visitor_mrkt = false
+			return agent
+		end
+	elseif landuse[1] == "rentl_res"
+		agent.prcl_on_visitor_mrkt = false
+		return agent
+	end
+	return agent
+end
+
+function agent_on_visitor_market_step!(agent::CompanyAgent, model)
+	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos_idx)
+	agents = GetParcelAttribute(model, model.space.s, agent.pos_idx)
+	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos_idx)
+
+	if landuse[1] == "hosr"
+		if length(agents) < max_n_agents[1]
+			agent.prcl_on_visitor_mrkt = true
+			return agent
+		else
+			agent.prcl_on_visitor_mrkt = false
+			return agent
+		end
+	elseif landuse[1] == "hor"
+		agent.prcl_on_visitor_mrkt = false
+		return agent
+	end
+end
+
+
+
 
 
 
@@ -156,304 +349,504 @@ function agent_looking_for_parcel_step!(agent::LandlordAgent, model)
 	return agent
 end
 
-function agent_looking_for_parcel_step!(agent::DeveloperAgent, model)
+function agent_looking_for_parcel_step!(agent::CompanyAgent, model)
 	agent.looking_to_purchase = true
+	return agent
+end
+
+function agent_looking_for_parcel_step!(agent::VisitorAgent, model)
 	return agent
 end
 
 """
 	agent_WTP_step!(agent, model)
-Generates bid for agent based on utility of parcel
+Generates bid for individualAgent based on utility of parcel
+
 """
 function agent_WTP_step!(agent::UnoccupiedOwnerAgent, model, sellers)
 	return agent
 end
 
+check_zone(zone_key, zone) = any(zone_key .∈ [split(zone, "-")])
+
 function agent_WTP_step!(agent::IndividualAgent, model::ABM, sellers)
-	prcl_zones = GetParcelsAttribute(model, model.space.zone_type, sellers)
+	sellers_idx = get_agents_pos_idx(sellers, model)
+	prcl_zones = GetParcelsAttribute_idx(model, model.space.zone_type, sellers_idx)
+	landuses = GetParcelsAttribute_idx(model, model.space.landuse, sellers_idx)
+	prev_landuses = GetParcelsAttribute_idx(model, model.space.prev_landuse, sellers_idx)
 
 	# getting zone keys (e.g., C-R, R, R-SR, etc.) that individual agent can consider
 	zone_keys = model.zoning_params[model.zoning_params[!,"owned_res"].==1, "Zone"]
-	sellers_in_zone = Vector{Bool}(undef, length(prcl_zones))
+
+	#=
+	 Getting all parcels that were previously an "owned_res" (only last landuse).
+	 assuming that if an area is rezoned, as something that cannot accomodate 
+	 owned_res, this takes effect if/when a different type of owner takes over, 
+	 not immediately for all parcel.
+
+	 Example:
+	 	+ parcel A was previously owned res.
+	 	+ the zone that parcel A is in was re-zoned as commercial-resort
+	 	+ parcel A is for sale. 
+	 	+ It can either transition to resort type property or transition to another owned_res.
+	 	+ If it transitions to resort type, it can't go back to owned_res again
+	 	+ If it remains as owned_res, it can again change hands to another owned_res.
+	=#
+
+
+	# Getting parcels in zones that an agent can purchase
+	zone_for_buyer_tf = Vector{Bool}(undef, length(prcl_zones))
 	for (i, zone) in enumerate(prcl_zones)
-		if zone in zone_keys
-			sellers_in_zone[i] = true
-		else
-			sellers_in_zone[i] = false
-		end
-	end
-	sellers = sellers[sellers_in_zone]
-
-	if length(sellers) > agent.number_prcls_aware
-		sellers = sample(model.rng, sellers, agent.number_prcls_aware, replace=false)
+		zone_for_buyer_tf[i] = check_zone(zone_keys, zone)
+		# if check_zone(zone_keys, zone)
+		# 	zone_for_buyer_tf[i] = true
+		# else
+		# 	zone_for_buyer_tf[i] = false
+		# end
 	end
 
-	seller_bid_to = 0
-	WTP_max = 0
-	for seller in sellers
-		parcel = model[seller].pos
-		u_parcel = utility_calc(model, agent, parcel)
-		WTP = (agent.budget*u_parcel^2)/((agent.price_goods^2)+(u_parcel^2))
-		if (WTP > WTP_max) || (WTP > model[seller].WTA)
-			seller_bid_to = seller
-			WTP_max = WTP
-		end
-	end
-	return seller_bid_to, WTP_max
+	seller_u = landuses.=="unoccupied"
+
+	condition1 = zone_for_buyer_tf .& seller_u 		# C1: parcel is for sale and in appropriate zone
+	condition2 = landuses.=="rentl_res"				# C2: parcel is a rental residential unit (rental house)
+	condition3 = landuses.=="hor"					# C3: parcel is a high occupancy rental unit (apartment)
+	condition4 = prev_landuses.=="owned_res"
+
+	all_conditions = condition1 .| condition2 .| condition3 .| condition4		# relevant sellers are one of above with OR operators
+	sellers = sellers[all_conditions]
+	sellers_idx = sellers_idx[all_conditions]
+	landuses = landuses[all_conditions]
+
+	seller_bid_to, WTP = agent_bid_calc(agent, model, sellers, sellers_idx)
+	return seller_bid_to, WTP, "owned_res"
 end
 
 
 function agent_WTP_step!(agent::LandlordAgent, model::ABM, sellers)	
-	prcl_zones = GetParcelsAttribute(model, model.space.zone_type, sellers)
+	sellers_idx = get_agents_pos_idx(sellers, model)
+	prcl_zones = GetParcelsAttribute_idx(model, model.space.zone_type, sellers_idx)
+	landuses = GetParcelsAttribute_idx(model, model.space.landuse, sellers_idx)
 	
 	# getting zone keys (e.g., C-R, R, R-SR, etc.) that individual agent can consider
 	zone_keys_rr = model.zoning_params[model.zoning_params[!,"rentl_res"].==1, "Zone"]
 	zone_keys_losr = model.zoning_params[model.zoning_params[!,"losr"].==1, "Zone"]
 
-	# TODO: Figure out if landlord needs to consider zones separately.
-	sellers_in_zone = Vector{Bool}(undef, length(prcl_zones))
+	# Getting parcels in zones that an agent can purchase
+	zone_for_rr_tf = Vector{Bool}(undef, length(prcl_zones))
+	zone_for_losr_tf = Vector{Bool}(undef, length(prcl_zones))
 	for (i, zone) in enumerate(prcl_zones)
-		if (zone in zone_keys_rr) || (zone in zone_keys_losr)
-			sellers_in_zone[i] = true
-		else
-			sellers_in_zone[i] = false
-		end
-	end
-	sellers = sellers[sellers_in_zone]
+		zone_for_rr_tf[i] = check_zone(zone_keys_rr, zone)
+		zone_for_losr_tf[i] = check_zone(zone_keys_losr, zone)
 
-	sellers_unocc = Vector{Bool}(undef, length(sellers))
-	for (i, seller) in enumerate(sellers)
-		if typeof(model[seller]) == UnoccupiedOwnerAgent
-			sellers_unocc[i] = true
-		else
-			sellers_unocc[i] = false
-		end
-	end
-	sellers = sellers[sellers_unocc]
+		# if check_zone(zone_keys_rr, zone)
+		# 	zone_for_rr_tf[i] = true
+		# else
+		# 	zone_for_rr_tf[i] = false
+		# end
 
-
-	if length(sellers) > agent.number_prcls_aware
-		sellers = sample(model.rng, sellers, agent.number_prcls_aware, replace=false)
+		# if check_zone(zone_keys_losr, zone)
+		# 	zone_for_losr_tf[i] = true
+		# else
+		# 	zone_for_losr_tf[i] = false
+		# end	
 	end
 
-	seller_bid_to = 0
-	WTP_max = 0
-	for seller in sellers
-		parcel = model[seller].pos
-		u_parcel, _ = utility_calc(model, agent, parcel)
-		WTP = (agent.budget*u_parcel^2)/((agent.price_goods^2)+(u_parcel^2))
-		if (WTP > WTP_max) || (WTP > model[seller].WTA)
-			seller_bid_to = seller
-			WTP_max = WTP
-		end
+	seller_u = landuses.=="unoccupied"
+	condition_rr = zone_for_rr_tf .& seller_u
+	condition_losr = zone_for_losr_tf .& seller_u
+
+	sellers_rr = sellers[condition_rr]
+	sellers_idx_rr = sellers_idx[condition_rr]
+	
+	sellers_losr = sellers[condition_losr]
+	sellers_idx_losr = sellers_idx[condition_losr]
+
+	seller_bid_to_rr, WTP_rr = agent_bid_calc(agent, model, sellers_rr, sellers_idx_rr, "rentl_res")
+	seller_bid_to_losr, WTP_losr = agent_bid_calc(agent, model, sellers_losr, sellers_idx_losr, "losr")
+
+	if WTP_rr > WTP_losr
+		WTP_max = WTP_rr
+		seller_bid_to = seller_bid_to_rr
+		LU_bid = "rentl_res"
+	else
+		WTP_max = WTP_losr
+		seller_bid_to = seller_bid_to_losr
+		LU_bid = "losr"
 	end
-	return seller_bid_to, WTP_max
+	return seller_bid_to, WTP_max, LU_bid
+
 end
 
 
-function agent_WTP_step!(agent::DeveloperAgent, model, sellers)
+function agent_WTP_step!(agent::CompanyAgent, model, sellers)
 	# getting parcel zones
-	prcl_zones = GetParcelsAttribute(model, model.space.zone_type, sellers)
+	sellers_idx = get_agents_pos_idx(sellers, model)
+	prcl_zones = GetParcelsAttribute_idx(model, model.space.zone_type, sellers_idx)
+	landuses = GetParcelsAttribute_idx(model, model.space.landuse, sellers_idx)
 	
 	# getting zone keys (e.g., C-R, R, R-SR, etc.) that individual agent can consider
 	zone_keys_hor = model.zoning_params[model.zoning_params[!,"ho_res"].==1, "Zone"]
 	zone_keys_hosr = model.zoning_params[model.zoning_params[!,"hosr"].==1, "Zone"]
 
-	# TODO: make developer consider zones separately; 
 	# Getting parcels in zones that an agent can purchase
-	sellers_in_zone = Vector{Bool}(undef, length(prcl_zones))
+	zone_for_hor_tf = Vector{Bool}(undef, length(prcl_zones))
+	zone_for_hosr_tf = Vector{Bool}(undef, length(prcl_zones))
 	for (i, zone) in enumerate(prcl_zones)
-		if (zone in zone_keys_hor) || (zone in zone_keys_hosr)
-			sellers_in_zone[i] = true
-		else
-			sellers_in_zone[i] = false
-		end
+		zone_for_hor_tf[i] = check_zone(zone_keys_hor, zone)
+		zone_for_hosr_tf[i] = check_zone(zone_keys_hosr, zone)
 	end
-	sellers = sellers[sellers_in_zone]
 
-	#= ensuring that the seller is an UnoccupiedOwnerAgent; 
-		e.g., so developer doesn't purchase a property for rent from landlord agent
-	=#
-	sellers_unocc = Vector{Bool}(undef, length(sellers))
-	for (i, seller) in enumerate(sellers)
-		if typeof(model[seller]) == UnoccupiedOwnerAgent
-			sellers_unocc[i] = true
-		else
-			sellers_unocc[i] = false
-		end
+	seller_u = landuses.=="unoccupied"
+	condition_hor = zone_for_hor_tf .& seller_u
+	condition_hosr = zone_for_hosr_tf .& seller_u
+
+	sellers_hor = sellers[condition_hor]
+	sellers_idx_hor = sellers_idx[condition_hor]
+	
+	sellers_hosr = sellers[condition_hosr]
+	sellers_idx_hosr = sellers_idx[condition_hosr]
+
+	seller_bid_to_hor, WTP_hor = agent_bid_calc(agent, model, sellers_hor, sellers_idx_hor, "hor")
+	seller_bid_to_hosr, WTP_hosr = agent_bid_calc(agent, model, sellers_hosr, sellers_idx_hosr, "hosr")
+
+	if WTP_hor > WTP_hosr
+		WTP_max = WTP_hor
+		seller_bid_to = seller_bid_to_hor
+		LU_bid = "hor"
+	else
+		WTP_max = WTP_hosr
+		seller_bid_to = seller_bid_to_hosr
+		LU_bid = "hosr"
 	end
-	sellers = sellers[sellers_unocc]
+	return seller_bid_to, WTP_max, LU_bid
+end
 
-	# getting random subsample of parcels (bounding develoepr rationality)
+function agent_bid_calc(agent::IndividualAgent, model::ABM, sellers, sellers_idx)
+	# getting random subsample of parcels (bounding individual rationality)
 	if length(sellers) > agent.number_prcls_aware
-		sellers = sample(model.rng, sellers, agent.number_prcls_aware, replace=false)
+		sample_idx = sample(model.rng, 1:length(sellers), agent.number_prcls_aware, replace=false)
+
+		sellers = sellers[sample_idx]
+		sellers_idx = sellers_idx[sample_idx]
 	end
 
-	# Getting parcel with maximum utility for developer
+	# Getting parcel with maximum utility for individual
 	seller_bid_to = 0
-	WTP_max = 0
-	for seller in sellers
-		parcel = model[seller].pos
-		u_parcel, _ = utility_calc(model, agent, parcel)
-		WTP = (agent.budget*u_parcel^2)/((agent.price_goods^2)+(u_parcel^2))
-		if (WTP > WTP_max) || (WTP > model[seller].WTA)
+	WTP_max = 0.0
+	for i in eachindex(sellers)
+		seller = sellers[i]
+		seller_idx = sellers_idx[i]
+
+		u_parcel = utility_calc_idx(model, agent, seller_idx)
+		NB = model.n_individuals_searching
+		NS = model.FullTimeResidents_vacancy
+		eps =  eps_calc(NB, NS)
+
+		WTP = (agent.budget*u_parcel^2)/((agent.price_goods^2)+(u_parcel^2))*(1+eps)
+
+		if (WTP > WTP_max) && (WTP > model[seller].WTA)
+			seller_bid_to = seller
+			WTP_max = WTP
+		end
+	end
+
+	return seller_bid_to, WTP_max
+end
+
+
+
+function agent_bid_calc(agent::LandlordAgent, model::ABM, sellers, sellers_idx, proposed_LU)
+	# getting random subsample of parcels (bounding landlord rationality)
+	if length(sellers) > agent.number_prcls_aware
+		sample_idx = sample(model.rng, 1:length(sellers), agent.number_prcls_aware, replace=false)
+		sellers_idx = sellers_idx[sample_idx]
+		sellers = sellers[sample_idx]
+	end
+
+	if proposed_LU == "rentl_res"
+		NB = model.n_individuals_searching
+		NS = model.FullTimeResidents_vacancy
+		eps = eps_calc(NB, NS)
+
+	elseif proposed_LU == "losr"
+		NB = model.n_visitoragents_searching
+		NS = model.Visitors_vacancy
+		eps = eps_calc(NB, NS)
+	end
+
+	# Getting parcel with maximum utility for landlord
+	seller_bid_to = 0
+	WTP_max = 0.0
+	for i in eachindex(sellers)
+		seller = sellers[i]
+		seller_idx = sellers_idx[i]
+
+		u_parcel = utility_calc_idx_LanduseIn(model, agent, seller_idx, proposed_LU)
+
+		WTP = (agent.budget*u_parcel^2)/((agent.price_goods^2)+(u_parcel^2))*(1+eps)
+		if (WTP > WTP_max) && (WTP > model[seller].WTA)
 			seller_bid_to = seller
 			WTP_max = WTP
 		end
 	end
 	return seller_bid_to, WTP_max
-
 end
 
+function agent_bid_calc(agent::CompanyAgent, model::ABM, sellers, sellers_idx, proposed_LU)
+	# getting random subsample of parcels (bounding landlord rationality)
+	if length(sellers) > agent.number_prcls_aware
+		sample_idx = sample(model.rng, 1:length(sellers), agent.number_prcls_aware, replace=false)
+		sellers_idx = sellers_idx[sample_idx]
+		sellers = sellers[sample_idx]
+	end
+
+
+
+	if proposed_LU == "hor"
+		NB = model.n_individuals_searching
+		NS = model.FullTimeResidents_vacancy
+		eps = eps_calc(NB, NS)
+	elseif proposed_LU == "hosr"
+		NB = model.n_visitoragents_searching
+		NS = model.Visitors_vacancy
+		eps = eps_calc(NB, NS)
+	end
+
+	# Getting parcel with maximum utility for landlord
+	seller_bid_to = 0
+	WTP_max = 0.0
+	for i in eachindex(sellers)
+		seller = sellers[i]
+		seller_idx = sellers_idx[i]
+
+		u_parcel = utility_calc_idx_LanduseIn(model, agent, seller_idx, proposed_LU)
+
+		WTP = (agent.budget*u_parcel^2)/((agent.price_goods^2)+(u_parcel^2))*(1+eps)
+		if (WTP > WTP_max) && (WTP > model[seller].WTA)
+			seller_bid_to = seller
+			WTP_max = WTP
+		end
+	end
+	return seller_bid_to, WTP_max
+end
 
 """
 	utility_calc(model::ABM, agent::AgentType, parcel::String)
 Calculates utility of 'parcel' for 'agent'
 """
-function utility_calc(model::ABM, agent::UnoccupiedOwnerAgent, parcel::String)
-	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel)[1]
-	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel)[1]
-
-	p_coast = proximity_calc(d_coast, model)
-	p_commasst = proximity_calc(d_commasst, model)
-
-	NB = model.FullTimeResidents_searching
-	NS = model.n_unoccupied
-	p_market = tanh(NB/NS)*100
-
-	u_parcel = p_coast^agent.alpha1 * p_commasst^agent.alpha2 * p_market^agent.alpha3
-	return u_parcel
-end
 
 function utility_calc(model::ABM, agent::IndividualAgent, parcel::String)
-	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel)[1]
-	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel)[1]
-
-	p_coast = proximity_calc(d_coast, model)
-	p_commasst = proximity_calc(d_commasst, model)
-
-	NB = model.FullTimeResidents_searching
-	NS = model.n_unoccupied
-	p_market = tanh(NB/NS)*100
-
-	u_parcel = p_coast^agent.alpha1 * p_commasst^agent.alpha2 * p_market^agent.alpha3
+	idx = pos2cell(parcel, model)
+	u_parcel = utility_calc_idx(model, agent, idx)
 	return u_parcel
 end
 
-function utility_calc(model::ABM, agent::LandlordAgent, parcel::String)
-	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel)[1]
-	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel)[1]
-	landuse = GetParcelAttribute(model, model.space.landuse, parcel)[1]
+
+"""
+	_utility(alphas::Vector{Float64}, proxs::Vector{Float64})
+lower level utility calc.
+alpha and proxs are vectors of floats.
+Loops through and computes cobb-douglas utilty function
+"""
+function _utility(alphas::Vector{Float64}, proxs::Vector{Float64})
+	u = Vector{Float64}(undef, length(alphas))
+	for i in eachindex(alphas)
+		u[i] = proxs[i]^alphas[i]
+	end
+	return prod(u)
+end
+
+
+function _utility_comp(alphas::Vector{Float64}, proxs::Vector{Float64})
+	u = Vector{Float64}(undef, length(alphas))
+	for i in eachindex(alphas)
+		u[i] = proxs[i]^alphas[i]
+	end
+	return u
+end
+"""	
+	utility_calc_idx(model::ABM, agent::AbstractAgent, parcel_idx::Int64)
+calculates utility of parcel for agent.
+parcel is pre-identified via it's index in the parcel space
+"""
+
+function utility_calc_idx(model::ABM, alphas::Vector{Float64}, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
 
 	p_coast = proximity_calc(d_coast, model)
 	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
 	
-	# -- market calcs for rental residential (rr)
-	NB = model.FullTimeResidents_searching
-	NS = model.n_unoccupied
-	NS == 0 && (NS=1)	 # if NS is 0, set to 1 (avoid division by 0)
-	p_market_rr = tanh(NB/NS)*100
-
-
-	# -- market calcs for low occupancy seasonal rental (losr)
-	NV = max((model.Visitor_total-model.n_LOSR), 0) #+ model.n_HOSR
-	NS = model.n_unoccupied
-	NS == 0 && (NS=1)	 # if NS is 0, set to 1 (avoid division by 0)
-	p_market_losr = tanh(NV/NS)*100
-
-
-	# -------------------------
-	u_parcel_rr = p_coast^agent.alpha1_RR * p_commasst^agent.alpha2_RR * p_market_rr^agent.alpha3_RR
-	u_parcel_losr = p_coast^agent.alpha1_LOSR * p_commasst^agent.alpha2_LOSR * p_market_losr^agent.alpha3_LOSR
-
-	# new LandlordAgent owner; decides initial landuse for parcel
-	if (landuse in ["rentl_res", "losr"]) == false
-		max_idx = findmax([u_parcel_rr, u_parcel_losr])[2]
-		landuse = ["rentl_res", "losr"][max_idx]
-		return max(u_parcel_rr, u_parcel_losr), landuse
-	end
-
-	if u_parcel_losr - agent.transition_penalty > u_parcel_rr
-		return u_parcel_losr, "losr"
-	elseif u_parcel_rr - agent.transition_penalty > u_parcel_losr
-		return u_parcel_rr, "rentl_res"
-
-	else
-		return max(u_parcel_rr, u_parcel_losr), landuse
-	end
+	u_parcel = _utility(alphas, [p_coast, p_commasst, p_cbd])
+	return u_parcel
 end
 
-
-function utility_calc(model::ABM, agent::DeveloperAgent, parcel::String)
-	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel)[1]
-	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel)[1]
-	landuse = GetParcelAttribute(model, model.space.landuse, parcel)[1]
+function utility_calc_idx(model::ABM, alphas::Vector{Distribution}, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
 
 	p_coast = proximity_calc(d_coast, model)
 	p_commasst = proximity_calc(d_commasst, model)
-
-	# -- market calcs for rental residential (rr)
-	NB = model.FullTimeResidents_searching
-	NS = model.n_unoccupied
-	NS == 0 && (NS=1)	 # if NS is 0, set to 1 (avoid division by 0)
-	p_market_hor = tanh(NB/NS)*100
-
-
-	# -- market calcs for low occupancy seasonal rental (losr)
-	NV = max((model.Visitor_total-model.n_LOSR), 0) #+ model.n_HOSR
-	NS = model.n_unoccupied
-	NS == 0 && (NS=1)	 # if NS is 0, set to 1 (avoid division by 0)
-	p_market_hosr = tanh(NV/NS)*100
-
-
-	# -------------------------
-	u_parcel_hor = p_coast^agent.alpha1_HOR * p_commasst^agent.alpha2_HOR * p_market_hor^agent.alpha3_HOR
-	u_parcel_hosr = p_coast^agent.alpha1_HOSR * p_commasst^agent.alpha2_HOSR * p_market_hosr^agent.alpha3_HOSR
-
-	# new Developer owner; decides initial landuse for parcel
-	if (landuse in ["hor", "hosr"]) == false
-		max_idx = findmax([u_parcel_hor, u_parcel_hosr])[2]
-		landuse = ["hor", "hosr"][max_idx]
-		return max(u_parcel_hor, u_parcel_hosr), landuse
-	end
-
-	# TODO: come back to this; figure out how to not let develoepr switch land uses like landlord can
-	if u_parcel_hosr - agent.transition_penalty > u_parcel_hor
-		return u_parcel_hosr, "hosr"
-	elseif u_parcel_hor - agent.transition_penalty > u_parcel_hosr
-		return u_parcel_hor, "hor"
-
-	else
-		return max(u_parcel_hor, u_parcel_hosr), landuse
-	end
+	p_cbd = proximity_calc(d_cbd, model)
+	
+	alphas = [mean(alphas[1]), mean(alphas[2]), mean(alphas[3])]
+	u_parcel = _utility(alphas, [p_coast, p_commasst, p_cbd])
+	return u_parcel
 end
+
+function utility_calc_idx(model::ABM, agent::IndividualAgent, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+	
+	u_parcel = _utility([agent.alpha1, agent.alpha2, agent.alpha3], [p_coast, p_commasst, p_cbd])
+	return u_parcel
+end
+
+function utility_calc_idx(model::ABM, agent::VisitorAgent, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+	
+	u_parcel = _utility([agent.alpha1, agent.alpha2, agent.alpha3], [p_coast, p_commasst, p_cbd])
+	return u_parcel
+end
+
+
+
+"""
+	utility_calc_component_idx(model::ABM, agent::AbstractAgent, parcel_idx::Int64)
+returns utility of parcel broken up into it's different components
+(e.g., preferences + market term)
+the parcel is identified by its index in the parcel space
+"""
+
+function utility_calc_component_idx(model::ABM, agent::IndividualAgent, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+
+	utility_vector = _utility_comp([agent.alpha1, agent.alpha2, agent.alpha3], [p_coast, p_commasst, p_cbd])
+	return utility_vector
+end
+
+function utility_calc_component_idx(model::ABM, agent::RealEstateAgent, alphas::Vector{Float64}, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+	
+	utility_vector = _utility_comp(alphas, [p_coast, p_commasst, p_cbd])
+	return utility_vector
+end
+
+function utility_calc_component_idx(model::ABM, agent::VisitorAgent, parcel_idx::Int64)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+
+	utility_vector = _utility_comp([agent.alpha1, agent.alpha2, agent.alpha3], [p_coast, p_commasst, p_cbd])
+	return utility_vector
+end
+
+
+
+"""
+	utility_calc_idx_LanduseIn(model::ABM, agent::LandlordAgent, parcel_idx::Int64, landuse::String)
+utility calc for landlord and company agents for a parcel in a specific landuse
+returns utility for the parcel for the specific landuse type
+the parcel is identified by its index in the parcel space
+"""
+function utility_calc_idx_LanduseIn(model::ABM, agent::LandlordAgent, parcel_idx::Int64, landuse::String)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+	if landuse == "rentl_res"
+		u_parcel = _utility([agent.alpha1_RR, agent.alpha2_RR, agent.alpha3_RR], [p_coast, p_commasst, p_cbd])
+
+	elseif landuse == "losr"
+		u_parcel = _utility([agent.alpha1_LOSR, agent.alpha2_LOSR, agent.alpha3_LOSR], [p_coast, p_commasst, p_cbd])
+	end
+	return u_parcel
+
+end
+
+function utility_calc_idx_LanduseIn(model::ABM, agent::CompanyAgent, parcel_idx::Int64, landuse::String)
+	d_coast = GetParcelAttribute(model, model.space.d_coast, parcel_idx)[1]
+	d_commasst = GetParcelAttribute(model, model.space.d_commasst, parcel_idx)[1]
+	d_cbd = GetParcelAttribute(model, model.space.d_cbd, parcel_idx)[1]
+
+
+	p_coast = proximity_calc(d_coast, model)
+	p_commasst = proximity_calc(d_commasst, model)
+	p_cbd = proximity_calc(d_cbd, model)
+
+	if landuse == "hor"
+		u_parcel = _utility([agent.alpha1_HOR, agent.alpha2_HOR, agent.alpha3_HOR], [p_coast, p_commasst, p_cbd])
+	elseif landuse == "hosr"
+		u_parcel = _utility([agent.alpha1_HOSR, agent.alpha2_HOSR, agent.alpha3_HOSR], [p_coast, p_commasst, p_cbd])
+	end
+	return u_parcel
+
+end
+
+
 
 """
 	agent_evaluate_bid_step!(agent, model)
 Agent evaluates bids that are recieved on parcel
 """
-function agent_evaluate_bid_step!(agent::UnoccupiedOwnerAgent, model::ABM, bidders, SBTs, WTPs)
+function agent_evaluate_bid_step!(agent::UnoccupiedOwnerAgent, model::ABM, bidders, SBTs, WTPs, LUs)
 	bids_to_seller_tf = SBTs .==agent.id
 	if sum(bids_to_seller_tf) == 0  		# if seller recieves not bids, return
 		return
 	end
 	bidders = bidders[bids_to_seller_tf] 	# identify bidders on the sellers parcel
 	WTPs = WTPs[bids_to_seller_tf]			# get WTP of these bids
+	LUs = LUs[bids_to_seller_tf]
 
 	max_idx = argmax(WTPs)					# get max index of WTP
 	WTP = WTPs[max_idx]						# get max WTP
 	bidder = bidders[max_idx]				# get bidder with highest bid
+	LU = LUs[max_idx]
 
-	simulate_parcel_transaction!(agent, model[bidder], model)
+	simulate_parcel_transaction!(agent, model[bidder], LU, model)
 end
 
 
-function agent_evaluate_bid_step!(agent::IndividualAgent, model::ABM, bidders, SBTs, WTPs)
+
+function agent_evaluate_bid_step!(agent::IndividualAgent, model::ABM, bidders, SBTs, WTPs, LUs)
 	return agent
 end
 
 
-function agent_evaluate_bid_step!(agent::LandlordAgent, model::ABM, bidders, SBTs, WTPs)
+function agent_evaluate_bid_step!(agent::LandlordAgent, model::ABM, bidders, SBTs, WTPs, LUs)
 	bids_to_seller_tf = SBTs .==agent.id
 	if sum(bids_to_seller_tf) == 0  		# if seller recieves no bids, return
 		return
@@ -468,7 +861,7 @@ function agent_evaluate_bid_step!(agent::LandlordAgent, model::ABM, bidders, SBT
 	simulate_parcel_transaction!(agent, model[bidder], model)
 end
 
-function agent_evaluate_bid_step!(agent::DeveloperAgent, model::ABM, bidders, SBTs, WTPs)
+function agent_evaluate_bid_step!(agent::CompanyAgent, model::ABM, bidders, SBTs, WTPs, LUs)
 	bids_to_seller_tf = SBTs .==agent.id
 	if sum(bids_to_seller_tf) == 0  		# if seller recieves no bids, return
 		return
@@ -476,8 +869,8 @@ function agent_evaluate_bid_step!(agent::DeveloperAgent, model::ABM, bidders, SB
 	bidders = bidders[bids_to_seller_tf] 	# identify bidders on the sellers parcel
 	WTPs = WTPs[bids_to_seller_tf]			# get WTP of these bids
 
-	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos)
-	occupying_agents = GetParcelAttribute(model, model.space.s, agent.pos)
+	max_n_agents = GetParcelAttribute(model, model.space.max_n_agents, agent.pos_idx)[1]
+	occupying_agents = GetParcelAttribute(model, model.space.s, agent.pos_idx)
 
 	n_space_avail = max_n_agents[1] - length(occupying_agents)
 	
@@ -492,29 +885,37 @@ function agent_evaluate_bid_step!(agent::DeveloperAgent, model::ABM, bidders, SB
 end
 
 
-"""
-	agent_update_landuse_step!(agent, model)
-Updates parcel land use for agents who successfully completed transaction
-the function 'update_landuse!' is in MyParcelSpace.jl
-"""
-function agent_update_landuse_step!(agent::UnoccupiedOwnerAgent, model::ABM)
-	update_landuse!(agent, model, ["unoccupied"])
-end
 
-function agent_update_landuse_step!(agent::IndividualAgent, model::ABM)
-	update_landuse!(agent, model, ["owned_res"])
-end
-
-function agent_update_landuse_step!(agent::LandlordAgent, model::ABM)
-	_, landuse = utility_calc(model, agent, agent.pos)
-	update_landuse!(agent, model, [landuse])
+function agent_close_step!(agent::AbstractAgent, model::ABM)
+	return agent
 end
 
 
-function agent_update_landuse_step!(agent::DeveloperAgent, model::ABM)
-	_, landuse = utility_calc(model, agent, agent.pos)
-	update_landuse!(agent, model, [landuse])
+function agent_close_step!(agent::IndividualAgent, model::ABM)
+	if agent.pos != "none"		# if agent is in parcel, compute utility
+		u_vec  = utility_calc_component_idx(model, agent, agent.pos_idx)
+		agent.utility_cst = u_vec[1]
+		agent.utility_cms = u_vec[2]
+		agent.utility_cbd = u_vec[3]
+		agent.utility =  u_vec[1]*u_vec[2]*u_vec[3]
+		agent.bldg_dmg = model.space.AVG_DS[agent.pos_idx][1]
+	end
+	return agent
 end
+
+
+function agent_close_step!(agent::VisitorAgent, model::ABM)
+	if agent.pos != "none_v"		# if agent is in parcel, compute utility
+		u_vec  = utility_calc_component_idx(model, agent, agent.pos_idx)
+		agent.utility_cst = u_vec[1]
+		agent.utility_cms = u_vec[2]
+		agent.utility_cbd = u_vec[3]
+		agent.utility =  u_vec[1]*u_vec[2]*u_vec[3]
+		agent.bldg_dmg = model.space.AVG_DS[agent.pos_idx][1]
+	end
+	return agent
+end
+
 
 """
 	check_switch_landuse!(agent, model)
@@ -526,21 +927,55 @@ else:
 	switches by trying to maximize utility
 """
 function check_switch_landuse!(agent::LandlordAgent, model::ABM)
-	landuse = GetParcelAttribute(model, model.space.landuse, agent.pos)[1]
+	NB = model.n_individuals_searching
+	NS = model.FullTimeResidents_vacancy
+	eps_ftr = eps_calc(NB, NS)
+	
+	NB = model.n_visitoragents_searching
+	NS = model.Visitors_vacancy
+	eps_vis = eps_calc(NB, NS)
 
-	# currently rental_res
-	if landuse == "rentl_res"
-		agents = GetParcelAttribute(model, model.space.s, agent.pos)
-		# another agent is occupying; don't update landuse
-		if length(agents)>1
-			return 
+	# println(eps_ftr, " ", eps_vis, " ", eps_ftr - eps_vis)
+	# checking if its advantageous to switch between full time residence and seasonal rental unit
+	if (eps_ftr - agent.transition_penalty > eps_vis) && (model.space.landuse[agent.pos_idx]==["losr"])
+
+		# remove all visitor agents
+		agents_in_parcel = model.space.s[agent.pos_idx]
+		for a in agents_in_parcel
+			if a != agent.id
+				move_agent!(model[a], "none_v", model)
+			end
 		end
+		update_landuse!(agent, model, ["rentl_res"])
+
+		# simulate market search for this parcel
+		bidders = GetBidders!(model, shuff=true)	
+		SBTs, WTPs, LUs = MarketSearch(model, bidders, [agent.id])
+		ParcelTransaction!(model, bidders, SBTs, WTPs, LUs, [agent.id])
+	
+		update_individual_counts!(model)
+		update_visitor_counts!(model)
+		update_VacancyCounts!(model)
+
+	elseif (eps_vis - agent.transition_penalty > eps_ftr) && (model.space.landuse[agent.pos_idx]==["rentl_res"])
+		# remove all agents that are renting
+		agents_in_parcel = model.space.s[agent.pos_idx]
+		for a in agents_in_parcel
+			if a != agent.id
+				move_agent!(model[a], "none", model)
+			end
+		end
+
+		# simulate visitor market search for this parcel
+		update_landuse!(agent, model, ["losr"])
+		VisitorMarketSearch!(model, [agent.id], shuff=true)
+
+		update_individual_counts!(model)
+		update_visitor_counts!(model)
+		update_VacancyCounts!(model)
+
 	end
 
-	_, new_landuse = utility_calc(model, agent, agent.pos)
-	if new_landuse != landuse
-		update_landuse!(agent, model, [new_landuse])
-	end
 end
 
 
@@ -552,19 +987,21 @@ if agent is a LandlordAgent, then any occupying agents must find a new place to 
 """
 function agent_dies!(agent::A, model::ABM) where {A<:AbstractAgent}
 	pos = agent.pos
+	pos_idx = agent.pos_idx
 	kill_agent!(agent, model)
-	if occursin("none", agent.pos) == false	# if agent was in parcel
+	if agent.pos != "none"	# if agent was in parcel
 		if agent.own_parcel==true
 			id = next_avail_id(model)		# new agent is UnoccupiedOwnerAgent
 			new_agent = UnoccupiedOwnerAgent(
 						id=id,
 						pos=pos,
-						WTA=model.Unoccupied_WTA,
+						pos_idx=pos_idx,
 						prcl_on_mrkt=true,
+						prcl_on_visitor_mrkt=false,
 						looking_to_purchase=false,
 						own_parcel=true
 						)
-			add_agent_pos_owner!(new_agent, model)
+			add_agent_pos_owner!(new_agent, model, "unoccupied")
 		end
 	end
 end
@@ -572,30 +1009,42 @@ end
 
 function agent_dies!(agent::LandlordAgent, model::ABM)
 	pos = agent.pos
-	kill_agent!(agent, model)
-	idx = pos2cell(pos, model)
-	agents_in_parcel = model.space.s[idx]
-	if agents_in_parcel != []
-		for a in agents_in_parcel
-			new_pos = next_avail_pos(model)
-			new_pos = string("none_",new_pos)
-			move_agent!(model[a], new_pos, model)
-		end
-	end
+	pos_idx = agent.pos_idx
+	
+	kill_agent!(agent, model) # not temp
 
-	if occursin("none", agent.pos) == false		# if agent was in parcel
-		id = next_avail_id(model)				# new agent is UnoccupiedOwnerAgent
+	if pos != "none"					# if agent was in parcel
+		# remove all occupying agents
+		agents_in_parcel = model.space.s[pos_idx]
+		if agents_in_parcel != []
+			for a in agents_in_parcel
+				if typeof(model[a])==IndividualAgent
+					move_agent!(model[a], "none", model)
+				else
+					move_agent!(model[a], "none_v", model)
+				end
+			end
+		end
+
+		# and new owning agent is UnoccupiedOwnerAgent
+		id = next_avail_id(model) 
 		new_agent = UnoccupiedOwnerAgent(
 					id=id,
 					pos=pos,
-					WTA=model.Unoccupied_WTA,
+					pos_idx=pos_idx,
 					prcl_on_mrkt=true,
+					prcl_on_visitor_mrkt=false,
 					looking_to_purchase=false,
 					own_parcel=true
 					)
-		add_agent_pos_owner!(new_agent, model)
+		add_agent_pos_owner!(new_agent, model, "unoccupied")
+
+
+
 	end
 end
+
+
 
 
 """
@@ -610,6 +1059,22 @@ function proximity_calc(d_feat::Float64, model)::Float64
 	proximity = exp(-d_feat*model.distance_decay_exponent)*100
 	return proximity
 end
+
+
+
+"""
+	eps_calc(NB, NS)
+returns epsilon value for number of buyers (NB) and number of sellers (NS)
+This term is used to drive the market.
+e.g., if NB > NS, eps > 0 and it's a sellers market
+	if NB < NS, eps < 0 and it's a buyers market
+Taken from Filatova et al., 2009
+"""	
+
+function eps_calc(NB, NS)
+	return (NB-NS)/(NB+NS)
+end
+
 
 
 

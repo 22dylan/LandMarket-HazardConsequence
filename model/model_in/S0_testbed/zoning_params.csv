@@ -1,0 +1,7 @@
+Zone,unoccupied,owned_res,rentl_res,ho_res,losr,hosr,comm
+OS,1,0,0,0,0,0,0
+C,0,0,0,0,0,0,1
+C-R,0,1,1,1,1,0,1
+C-SR,0,0,0,0,1,1,1
+R,0,1,1,1,1,0,0
+R-SR,0,1,1,1,1,1,0
