@@ -121,6 +121,8 @@ class misc_python_ops():
 		feature_df = input_dict[feature].copy()
 
 		# if feature == "GreenSpace":	# adding zones that are open space to the distance calcs
+		# 	print(feature_df.area)
+		# 	fds
 		# 	zones = input_dict['Zoning'].copy()
 		# 	zones_os = zones.loc[zones['zone_abbr']=='OS']
 		# 	zones_os['FID'] = 0

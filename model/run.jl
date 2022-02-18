@@ -7,7 +7,7 @@ using StatsBase
 using Distributions
 using PyCall
 using ProgressMeter
-# using InteractiveUtils
+using InteractiveUtils
 
 include(joinpath("ABM_Backend", "structs.jl"))
 include(joinpath("ABM_Backend", "MiscFunc.jl"))
@@ -59,8 +59,14 @@ function main(model_runname)
 			:utility_cst,	# alpha 1
 			:utility_cms,	# alpha 2
 			:utility_cbd,	# alpha 3
+			:utility_mkt,	# alpha 4
+			:alpha1,
+			:alpha2,
+			:alpha3,
+			:alpha4,
 			:budget,
-			:bldg_dmg,
+			:AVG_bldg_dmg,
+			:MC_bldg_dmg,
 			]
 
 	sdata = [
@@ -75,6 +81,7 @@ function main(model_runname)
 			:year_built, 
 			:no_stories, 
 			:MC_DS, 
+			:AVG_DS,
 			:LS_0,
 			:LS_1,
 			:LS_2,
@@ -150,7 +157,7 @@ function main(model_runname)
 		fn_space = "df_space_$i.csv"
 		write_out(data_s, model_runname, fn_space)
 	end
-	PYTHON_OPS.complete_run()
+	# PYTHON_OPS.complete_run()
 end
 
 """

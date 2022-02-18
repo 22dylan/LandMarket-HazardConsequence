@@ -408,26 +408,6 @@ function remove_agent_from_space!(a::A, model::ABM{<:ParcelSpace,A}) where {A<:A
 end
 
 
-# """
-# 	simulate_parcel_transaction!(agent1, agent2, model)
-# agent1->seller, agent2->bidder
-# switches the 2 agents positions.
-# e.g. simulate parcel transaction 
-# """
-# function simulate_parcel_transaction!(agent1::AbstractAgent, agent2::AbstractAgent, model::ABM)
-# 	a1_pos = agent1.pos 	# parcel that is being traded
-# 	a1_pos_idx = agent1.pos_idx
-
-# 	remove_agent_from_space!(agent2, model)	# removing agent2 from it's current position in the model
-	
-# 	agent2.pos = a1_pos		# udpating agent2's position
-# 	agent2.pos_idx = a1_pos_idx
-
-# 	kill_agent!(agent1, model)		# removes agent1 (seller) from model
-# 	add_agent_pos_owner!(agent2, model)	# adds agent2 (buyer) to model
-# end
-
-
 
 """
 	simulate_parcel_transaction!(agent1::LandlordAgent, agent2::IndividualAgent, model)
@@ -500,7 +480,13 @@ function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::Comp
 	kill_agent!(agent1, model)		# removes agent1 (seller) from model
 	add_agent_pos_owner!(agent2, model, LU)	# adds agent2 (buyer) to model
 	
-	VisitorMarketSearch!(model, [agent2.id], shuff=true)
+	if LU == "hosr" 	# if transitioning to hosr, simulate visitor market search
+		VisitorMarketSearch!(model, [agent2.id], shuff=true)
+	# elseif LU == "hor"	# if transitioning to hor, simulate full time resident market search
+	# 	bidders = GetBidders!(model, shuff=true)	
+	# 	SBTs, WTPs, LUs = MarketSearch(model, bidders, [agent2.id])
+	# 	ParcelTransaction!(model, bidders, SBTs, WTPs, LUs, [agent2.id])
+	end
 end
 
 
@@ -663,6 +649,7 @@ function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool, n_pe
 				alpha1=alphas[1],
 				alpha2=alphas[2],
 				alpha3=alphas[3],
+				alpha4=alphas[4],
 				budget=budget_calc(model, model.Individual_budget),
 				price_goods=model.Individual_price_goods,
 				number_prcls_aware=model.Individual_number_parcels_aware,
@@ -693,6 +680,7 @@ function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool, n_pe
 				alpha1=alphas[1],
 				alpha2=alphas[2],
 				alpha3=alphas[3],
+				alpha4=alphas[4],
 
 			)
 			add_agent_pos_visitor!(a2, model)
@@ -734,6 +722,7 @@ function add_agent_pos_owner!(agent::CompanyAgent, model::ABM; init::Bool, n_peo
 				alpha1=alphas[1],
 				alpha2=alphas[2],
 				alpha3=alphas[3],
+				alpha4=alphas[4],
 				budget=budget_calc(model, model.Individual_budget),
 				price_goods=model.Individual_price_goods,
 				number_prcls_aware=model.Individual_number_parcels_aware,
@@ -765,6 +754,7 @@ function add_agent_pos_owner!(agent::CompanyAgent, model::ABM; init::Bool, n_peo
 				alpha1=alphas[1],
 				alpha2=alphas[2],
 				alpha3=alphas[3],
+				alpha4=alphas[4],
 				)
 			add_agent_pos_visitor!(a2, model)
 		end

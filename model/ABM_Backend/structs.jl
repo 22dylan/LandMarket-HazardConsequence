@@ -15,23 +15,18 @@ Base.@kwdef mutable struct Parameters
 
 	nhousehold_dist::Distribution
 	nvisitor_dist::Distribution
-	Household_alphas
-	Visitor_alphas
-
 	age_dist::Distribution
-
-	# Unoccupied owner agent
-	Unoccupied_budget
-	Unoccupied_price_goods::Float64
 
 	# Individual/Household agent
 	Individual_budget
 	Individual_price_goods::Float64
 	Individual_number_parcels_aware::Int64
 	Individual_household_change_dist::Distribution
-
+	Household_alphas
+	
 	# Visitor agent
 	Visitor_number_parcels_aware::Int64 = 0
+	Visitor_alphas
 
 	# Landlord agent
 	Landlord_budget
@@ -39,12 +34,16 @@ Base.@kwdef mutable struct Parameters
 	Landlord_number_parcels_aware::Int64
 	Landlord_number_searching::Int64
 	Landlord_transition_penalty::Float64
+	Landlord_alphas_RR
+	Landlord_alphas_LOSR
 
 	# Company agent
 	Company_budget
 	Company_price_goods::Float64
 	Company_number_parcels_aware::Int64
 	Company_number_searching::Int64
+	Company_alphas_HOR
+	Company_alphas_HOSR
 	
 	# people counts/population growth
 	FullTimeResident_growth_rate::Float64
@@ -63,6 +62,10 @@ Base.@kwdef mutable struct Parameters
 	Visitors_searching::Int64 = 0
 	Visitors_total::Int64 = 0
 	Visitors_vacancy::Int64 = 0
+
+	# Real Estate Agent
+	LandBasePrice::Float64 = 0.0
+	
 
 	# agent counts
 	n_unoccupied_inparcel::Int64 = 0
@@ -93,6 +96,7 @@ Base.@kwdef mutable struct Parameters
 	n_HOR::Int64 = 0
 	n_HOSR::Int64 = 0
 	n_comm::Int64 = 0
+
 end
 
 
@@ -137,7 +141,8 @@ Base.@kwdef mutable struct UnoccupiedOwnerAgent <: AbstractAgent
 	looking_to_purchase::Bool
 	own_parcel::Bool
 	utility::Float64 = 0.0
-	bldg_dmg::Float64 = 0.0
+	AVG_bldg_dmg::Float64 = 0.0
+	MC_bldg_dmg::Int = 0 
 end
 
 Base.@kwdef mutable struct IndividualAgent <: AbstractAgent
@@ -147,6 +152,7 @@ Base.@kwdef mutable struct IndividualAgent <: AbstractAgent
 	alpha1::Float64
 	alpha2::Float64
 	alpha3::Float64
+	alpha4::Float64
 	budget::Float64
 	price_goods::Float64
 	number_prcls_aware::Int64
@@ -162,9 +168,11 @@ Base.@kwdef mutable struct IndividualAgent <: AbstractAgent
 	utility_cst::Float64 = 0.0
 	utility_cms::Float64 = 0.0
 	utility_cbd::Float64 = 0.0
+	utility_mkt::Float64 = 0.0
 
 	household_change_times::Vector{Int64}
-	bldg_dmg::Float64 = 0.0
+	AVG_bldg_dmg::Float64 = 0.0
+	MC_bldg_dmg::Int = 0 
 end
 
 
@@ -175,9 +183,11 @@ Base.@kwdef mutable struct LandlordAgent <: AbstractAgent
 	alpha1_RR::Float64
 	alpha2_RR::Float64
 	alpha3_RR::Float64
+	alpha4_RR::Float64
 	alpha1_LOSR::Float64
 	alpha2_LOSR::Float64
 	alpha3_LOSR::Float64
+	alpha4_LOSR::Float64
 	budget::Float64
 	price_goods::Float64
 	number_prcls_aware::Int64
@@ -189,7 +199,8 @@ Base.@kwdef mutable struct LandlordAgent <: AbstractAgent
 	own_parcel::Bool
 	transition_penalty::Float64
 	utility::Float64 = 0.0
-	bldg_dmg::Float64 = 0.0
+	AVG_bldg_dmg::Float64 = 0.0
+	MC_bldg_dmg::Int = 0 
 end
 
 
@@ -200,9 +211,11 @@ Base.@kwdef mutable struct CompanyAgent <: AbstractAgent
 	alpha1_HOR::Float64
 	alpha2_HOR::Float64
 	alpha3_HOR::Float64
+	alpha4_HOR::Float64
 	alpha1_HOSR::Float64
 	alpha2_HOSR::Float64
 	alpha3_HOSR::Float64
+	alpha4_HOSR::Float64
 	budget::Float64
 	price_goods::Float64
 	number_prcls_aware::Int64
@@ -212,7 +225,8 @@ Base.@kwdef mutable struct CompanyAgent <: AbstractAgent
 	WTA::Float64 = 0.0
 	own_parcel::Bool
 	utility::Float64 = 0.0
-	bldg_dmg::Float64 = 0.0
+	AVG_bldg_dmg::Float64 = 0.0
+	MC_bldg_dmg::Int = 0 
 end
 
 
@@ -225,13 +239,16 @@ Base.@kwdef mutable struct VisitorAgent <: AbstractAgent
 	alpha1::Float64
 	alpha2::Float64
 	alpha3::Float64
+	alpha4::Float64
 	
 	utility::Float64 = 0.0
 	utility_cst::Float64 = 0.0
 	utility_cms::Float64 = 0.0
 	utility_cbd::Float64 = 0.0
+	utility_mkt::Float64 = 0.0
 
-	bldg_dmg::Float64 = 0.0
+	AVG_bldg_dmg::Float64 = 0.0
+	MC_bldg_dmg::Int = 0 
 end
 
 
@@ -239,6 +256,7 @@ Base.@kwdef mutable struct RealEstateAgent <: AbstractAgent
 	id::Int
 	pos::String
 	pos_idx::Int64
+	LandBasePrice::Int64
 end
 
 

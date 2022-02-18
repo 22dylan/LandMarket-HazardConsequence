@@ -77,7 +77,7 @@ function AddAgents_fromParcelDF!(model::ABM, parcel_df::DataFrame)
 			add_agent_pos_owner!(agent, model, init=true)
 
 		elseif p["owner_type"]=="individual"
-			alphas = alpha_calc(model, model.Household_alphas)
+			alphas = alpha_calc(model, model.Household_alphas)			
 			agent = IndividualAgent(
 						id=id,
 						pos=p["guid"],
@@ -85,6 +85,7 @@ function AddAgents_fromParcelDF!(model::ABM, parcel_df::DataFrame)
 						alpha1=alphas[1],
 						alpha2=alphas[2],
 						alpha3=alphas[3],
+						alpha4=alphas[4],
 						budget=budget_calc(model, model.Individual_budget),
 						price_goods=model.Individual_price_goods,
 						number_prcls_aware=model.Individual_number_parcels_aware,
@@ -100,8 +101,8 @@ function AddAgents_fromParcelDF!(model::ABM, parcel_df::DataFrame)
 			add_agent_pos_owner!(agent, model, init=true)
 
 		elseif p["owner_type"]=="landlord"
-			alphas_RR = alpha_calc(model, model.Household_alphas)
-			alphas_LOSR = alpha_calc(model, model.Visitor_alphas)
+			alphas_RR = alpha_calc(model, model.Landlord_alphas_RR)
+			alphas_LOSR = alpha_calc(model, model.Landlord_alphas_LOSR)
 			agent = LandlordAgent(
 						id=id,
 						pos=p["guid"],
@@ -109,9 +110,11 @@ function AddAgents_fromParcelDF!(model::ABM, parcel_df::DataFrame)
 						alpha1_RR=alphas_RR[1],
 						alpha2_RR=alphas_RR[2],
 						alpha3_RR=alphas_RR[3],
+						alpha4_RR=alphas_RR[4],
 						alpha1_LOSR=alphas_LOSR[1],
 						alpha2_LOSR=alphas_LOSR[2],
 						alpha3_LOSR=alphas_LOSR[3],
+						alpha4_LOSR=alphas_LOSR[4],
 						budget=budget_calc(model, model.Landlord_budget),
 						price_goods=model.Landlord_price_goods,
 						number_prcls_aware=model.Landlord_number_parcels_aware,
@@ -126,8 +129,8 @@ function AddAgents_fromParcelDF!(model::ABM, parcel_df::DataFrame)
 			add_agent_pos_owner!(agent, model, init=true, n_people=p["numprec"])
 
 		elseif p["owner_type"]=="company"
-			alphas_HOR = alpha_calc(model, model.Household_alphas)
-			alphas_HOSR = alpha_calc(model, model.Visitor_alphas)
+			alphas_HOR = alpha_calc(model, model.Company_alphas_HOR)
+			alphas_HOSR = alpha_calc(model, model.Company_alphas_HOSR)
 			agent = CompanyAgent(
 						id=id,
 						pos=p["guid"],
@@ -135,9 +138,11 @@ function AddAgents_fromParcelDF!(model::ABM, parcel_df::DataFrame)
 						alpha1_HOR=alphas_HOR[1],
 						alpha2_HOR=alphas_HOR[2],
 						alpha3_HOR=alphas_HOR[3],
+						alpha4_HOR=alphas_HOR[4],
 						alpha1_HOSR=alphas_HOSR[1],
 						alpha2_HOSR=alphas_HOSR[2],
 						alpha3_HOSR=alphas_HOSR[3],
+						alpha4_HOSR=alphas_HOSR[4],
 						budget=budget_calc(model, model.Company_budget),
 						price_goods=model.Company_price_goods,
 						number_prcls_aware=model.Company_number_parcels_aware,
@@ -175,11 +180,8 @@ Not associated with a parcel yet
 function AddAgents_fromModelParams!(model)
 	for i = 1:model.Landlord_number_searching
 		id = next_avail_id(model)
-		# alphas_RR = alpha_calc(model, model.Landlord_RR_alphas)
-		# alphas_LOSR = alpha_calc(model, model.Landlord_LOSR_alphas)
-
-		alphas_RR = alpha_calc(model, model.Household_alphas)
-		alphas_LOSR = alpha_calc(model, model.Visitor_alphas)	
+		alphas_RR = alpha_calc(model, model.Landlord_alphas_RR)
+		alphas_LOSR = alpha_calc(model, model.Landlord_alphas_LOSR)
 		agent = LandlordAgent(
 					id=id,
 					pos="none",
@@ -187,9 +189,11 @@ function AddAgents_fromModelParams!(model)
 					alpha1_RR=alphas_RR[1],
 					alpha2_RR=alphas_RR[2],
 					alpha3_RR=alphas_RR[3],
+					alpha4_RR=alphas_RR[4],
 					alpha1_LOSR=alphas_LOSR[1],
 					alpha2_LOSR=alphas_LOSR[2],
 					alpha3_LOSR=alphas_LOSR[3],
+					alpha4_LOSR=alphas_LOSR[4],
 					budget=budget_calc(model, model.Landlord_budget),
 					price_goods=model.Landlord_price_goods,
 					number_prcls_aware=model.Landlord_number_parcels_aware,
@@ -206,11 +210,8 @@ function AddAgents_fromModelParams!(model)
 
 	for i = 1:model.Company_number_searching
 		id = next_avail_id(model)
-		# alphas_HOR = alpha_calc(model, model.Company_HOR_alphas)
-		# alphas_HOSR = alpha_calc(model, model.Company_HOSR_alphas)	
-
-		alphas_HOR = alpha_calc(model, model.Household_alphas)
-		alphas_HOSR = alpha_calc(model, model.Visitor_alphas)
+		alphas_HOR = alpha_calc(model, model.Company_alphas_HOR)
+		alphas_HOSR = alpha_calc(model, model.Company_alphas_HOSR)
 		agent = CompanyAgent(
 					id=id,
 					pos="none",
@@ -218,9 +219,11 @@ function AddAgents_fromModelParams!(model)
 					alpha1_HOR=alphas_HOR[1],
 					alpha2_HOR=alphas_HOR[2],
 					alpha3_HOR=alphas_HOR[3],
+					alpha4_HOR=alphas_HOR[4],
 					alpha1_HOSR=alphas_HOSR[1],
 					alpha2_HOSR=alphas_HOSR[2],
 					alpha3_HOSR=alphas_HOSR[3],
+					alpha4_HOSR=alphas_HOSR[4],
 					budget=budget_calc(model, model.Company_budget),
 					price_goods=model.Company_price_goods,
 					number_prcls_aware=model.Company_number_parcels_aware,
@@ -236,7 +239,8 @@ function AddAgents_fromModelParams!(model)
 	agent = RealEstateAgent(
 				id=next_avail_id(model),
 				pos="none_o",
-				pos_idx=pos2cell("none_o", model)
+				pos_idx=pos2cell("none_o", model),
+				LandBasePrice=model.LandBasePrice
 				)
 	add_agent_pos!(agent, model)
 end
@@ -251,14 +255,18 @@ if csz, pyincore is called to damage the built environment
 """
 function complex_model_step!(model)
 	if model.tick < model.t_csz			# pre-CSZ
+
 		PopulationGrowth!(model)		# updating population counts
 		UpdateModelCounts!(model)		# updating model counts; visitors not yet in parcels for iteration
+		AllAgentsStep!(model)			# 1s, 50k alct. --- (0.3s; 35k alct.)
+
 		SimulateVisitorMarketStep!(model)	# simulating the visitor market step
 		UpdateModelCounts!(model)
 
-		AllAgentsStep!(model)			# 1s, 50k alct. --- (0.3s; 35k alct.)
-		SimulateMarketStep!(model)	# 2s, 35k alct. --- (0.1s; 17k alct.)
+		# AllAgentsStep!(model)			# 1s, 50k alct. --- (0.3s; 35k alct.)
+		SimulateMarketStep!(model)		# 2s, 35k alct. --- (0.1s; 17k alct.)
 		UpdateModelCounts!(model)		# 0.3s, 130k alct. --- (0.25s; 140k alct.)
+
 	elseif model.tick == model.t_csz 	# CSZ
 		csz!(model)	# running CSZ for Seaside
 		close_model!(model)
@@ -280,7 +288,6 @@ function PopulationGrowth!(model)
 
 	PopulationGrowth_landlord!(model)
 	PopulationGrowth_company!(model)
-
 end
 
 """
@@ -311,6 +318,7 @@ function PopulationGrowth_individual!(model::ABM)
 					alpha1=alphas[1],
 					alpha2=alphas[2],
 					alpha3=alphas[3],
+					alpha4=alphas[4],
 					budget=budget_calc(model, model.Individual_budget),
 					price_goods=model.Individual_price_goods,
 					number_prcls_aware=model.Individual_number_parcels_aware,
@@ -361,6 +369,7 @@ function PopulationGrowth_visitor!(model)
 					alpha1=alphas[1],
 					alpha2=alphas[2],
 					alpha3=alphas[3],
+					alpha4=alphas[4],
 				)
 		n_visitors += n_people
 		add_agent_pos_visitor!(agent, model)
@@ -380,11 +389,8 @@ function PopulationGrowth_landlord!(model::ABM)
 	pos_idx = pos2cell(pos, model)
 	for i in 1:n_landlords_add
 		id = next_avail_id(model)
-		# alphas_RR = alpha_calc(model, model.Landlord_RR_alphas)
-		# alphas_LOSR = alpha_calc(model, model.Landlord_LOSR_alphas)
-
-		alphas_RR = alpha_calc(model, model.Household_alphas)
-		alphas_LOSR = alpha_calc(model, model.Visitor_alphas)	
+		alphas_RR = alpha_calc(model, model.Landlord_alphas_RR)
+		alphas_LOSR = alpha_calc(model, model.Landlord_alphas_LOSR)
 		agent = LandlordAgent(
 					id=id,
 					pos=pos,
@@ -392,9 +398,11 @@ function PopulationGrowth_landlord!(model::ABM)
 					alpha1_RR=alphas_RR[1],
 					alpha2_RR=alphas_RR[2],
 					alpha3_RR=alphas_RR[3],
+					alpha4_RR=alphas_RR[4],
 					alpha1_LOSR=alphas_LOSR[1],
 					alpha2_LOSR=alphas_LOSR[2],
 					alpha3_LOSR=alphas_LOSR[3],
+					alpha4_LOSR=alphas_LOSR[4],
 					budget=budget_calc(model, model.Landlord_budget),
 					price_goods=model.Landlord_price_goods,
 					number_prcls_aware=model.Landlord_number_parcels_aware,
@@ -422,11 +430,8 @@ function PopulationGrowth_company!(model::ABM)
 	pos_idx = pos2cell(pos, model)
 	for i in 1:n_companies_add
 		id = next_avail_id(model)
-		# alphas_HOR = alpha_calc(model, model.Company_HOR_alphas)
-		# alphas_HOSR = alpha_calc(model, model.Company_HOSR_alphas)	
-
-		alphas_HOR = alpha_calc(model, model.Household_alphas)
-		alphas_HOSR = alpha_calc(model, model.Visitor_alphas)
+		alphas_HOR = alpha_calc(model, model.Company_alphas_HOR)
+		alphas_HOSR = alpha_calc(model, model.Company_alphas_HOSR)
 		agent = CompanyAgent(
 					id=id,
 					pos=pos,
@@ -434,9 +439,11 @@ function PopulationGrowth_company!(model::ABM)
 					alpha1_HOR=alphas_HOR[1],
 					alpha2_HOR=alphas_HOR[2],
 					alpha3_HOR=alphas_HOR[3],
+					alpha4_HOR=alphas_HOR[4],
 					alpha1_HOSR=alphas_HOSR[1],
 					alpha2_HOSR=alphas_HOSR[2],
 					alpha3_HOSR=alphas_HOSR[3],
+					alpha4_HOSR=alphas_HOSR[4],
 					budget=budget_calc(model, model.Company_budget),
 					price_goods=model.Company_price_goods,
 					number_prcls_aware=model.Company_number_parcels_aware,
@@ -581,9 +588,6 @@ Places visitors in parcels
 function SimulateVisitorMarketStep!(model)
 	hosts = EstablishMarketHosts!(model, shuff=true)
 	VisitorMarketSearch!(model, hosts, shuff=true)
-	# update_visitor_counts!(model)
-	# update_VacancyCounts!(model)
-
 end
 
 
@@ -779,28 +783,27 @@ function update_VacancyCounts!(model)
 	landuses = GetParcelsAttribute(model, model.space.landuse)
 
 	# vacancies for full time residents
+	UN_tf = [lu=="unoccupied" for lu in landuses]
 	RR_tf = [lu=="rentl_res" for lu in landuses]
 	HOR_tf = [lu=="hor" for lu in landuses]
 
+
 	FullTimeResidence_tf = RR_tf .| HOR_tf
-	max_n_agents_ft = max_n_agents[FullTimeResidence_tf] #.- 1
+	max_n_agents_ft = max_n_agents[FullTimeResidence_tf]
 	n_agents_ft = n_agents[FullTimeResidence_tf]
 
-	model.FullTimeResidents_vacancy = sum(max_n_agents_ft) - sum(n_agents_ft)
-	# model.FullTimeResidents_vacancy = (sum(max_n_agents_ft) + model.n_unoccupied) - model.n_individuals_inparcel 
+	model.FullTimeResidents_vacancy = (sum(max_n_agents_ft) - sum(n_agents_ft)) + count(UN_tf)
 	model.FullTimeResidents_vacancy < 0 && (model.FullTimeResidents_vacancy = 0)
-
 
 	# vacancies for visitors
 	LOSR_tf = [lu=="losr" for lu in landuses]
 	HOSR_tf = [lu=="hosr" for lu in landuses]
 
 	VisitorResidence_tf = LOSR_tf .| HOSR_tf
-	max_n_agents_vs = max_n_agents[VisitorResidence_tf] #.- 1
+	max_n_agents_vs = max_n_agents[VisitorResidence_tf]
 	n_agents_vs = n_agents[VisitorResidence_tf]
 
 	model.Visitors_vacancy = sum(max_n_agents_vs) - sum(n_agents_vs)
-	# model.Visitors_vacancy = sum(max_n_agents_vs) - model.n_visitoragents_inparcel
 	model.Visitors_vacancy < 0 && (model.Visitors_vacancy = 0)
 end
 
@@ -869,12 +872,12 @@ end
 
 function set_up_model_properties(input_dict, parcel_df, iter)
 	input = input_dict["Input"]
-	
+	PreferenceMatrix = input_dict["PreferenceMatrix"]
+
 	t_csz = input[input[:,"Variable"] .== "n_years", "Value"][1]
 	n_sims = input[input[:,"Variable"] .== "n_sims", "Value"][1]
 	hazard_recurrence = input[input[:,"Variable"] .== "hazard_recurrence", "Value"][1]
 	distance_decay_exponent = input[input[:,"Variable"] .== "distance_decay_exponent", "Value"][1]
-	preference_alpha_std = input[input[:,"Variable"] .== "preference_alpha_std", "Value"][1]
 
 	# --- population information
 	FullTimeResident_growth_rate = input[input[:,"Variable"] .== "FullTimeResident_growth_rate", "Value"][1]
@@ -882,7 +885,6 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 
 	Visitor_growth_rate = input[input[:,"Variable"] .== "Visitor_growth_rate", "Value"][1]
 	Visitor_carrying_cap = input[input[:,"Variable"] .== "Visitor_carrying_cap", "Value"][1]
-
 
 	nhousehold_alpha = input[input[:,"Variable"] .== "nhousehold_alpha", "Value"][1]
 	nhousehold_theta = input[input[:,"Variable"] .== "nhousehold_theta", "Value"][1]
@@ -892,38 +894,29 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 	nvisitor_theta = input[input[:,"Variable"] .== "nvisitor_theta", "Value"][1]
 	nvisitor_dist = Gamma(nvisitor_alpha, nvisitor_theta)
 
-	Household_alpha1 = input[input[:,"Variable"] .== "Household_alpha1", "Value"][1]
-	Household_alpha2 = input[input[:,"Variable"] .== "Household_alpha2", "Value"][1]
-	Household_alpha3 = input[input[:,"Variable"] .== "Household_alpha3", "Value"][1]
-	Household_alphas = setup_alphas([Household_alpha1, Household_alpha2, Household_alpha3], preference_alpha_std)
-
-	Visitor_alpha1 = input[input[:,"Variable"] .== "Visitor_alpha1", "Value"][1]	
-	Visitor_alpha2 = input[input[:,"Variable"] .== "Visitor_alpha2", "Value"][1]
-	Visitor_alpha3 = input[input[:,"Variable"] .== "Visitor_alpha3", "Value"][1]
-	Visitor_alphas = setup_alphas([Visitor_alpha1, Visitor_alpha2, Visitor_alpha3], preference_alpha_std)
-
 	age_alpha = input[input[:,"Variable"] .== "age_alpha", "Value"][1]
 	age_theta = input[input[:,"Variable"] .== "age_theta", "Value"][1]
 	age_dist = Gamma(age_alpha, age_theta)
 
-	# -- Unoccupied agent properties
-	Unoccupied_budget_mean = input[input[:,"Variable"] .== "Unoccupied_budget_mean", "Value"][1]
-	Unoccupied_budget_std = input[input[:,"Variable"] .== "Unoccupied_budget_std", "Value"][1]
-	Unoccupied_price_goods = input[input[:,"Variable"] .== "Unoccupied_price_goods", "Value"][1]
-	Unoccupied_budget = setup_budget(Unoccupied_budget_mean, Unoccupied_budget_std)
-
-	# -- Individual agent information
-
+	# -- Household agent information
 	Individual_budget_mean = input[input[:,"Variable"] .== "Individual_budget_mean", "Value"][1]
 	Individual_budget_std = input[input[:,"Variable"] .== "Individual_budget_std", "Value"][1]
 	Individual_price_goods = input[input[:,"Variable"] .== "Individual_price_goods", "Value"][1]
 	Individual_number_parcels_aware = input[input[:,"Variable"] .== "Individual_number_parcels_aware", "Value"][1]	
 	Individual_household_change_rate = input[input[:,"Variable"] .== "Individual_household_change_rate", "Value"][1]
 	Individual_household_change_dist = Exponential(Individual_household_change_rate)
+	Household_alphas = PreferenceMatrix[!, "household"][1:4]
+	Household_alpha_std = PreferenceMatrix[!, "household"][5]
+	
+	Household_alphas = setup_alphas(Household_alphas, Household_alpha_std)
 	Individual_budget = setup_budget(Individual_budget_mean, Individual_budget_std)
+
 
 	# -- Visitor agent information
 	Visitor_number_parcels_aware = input[input[:,"Variable"] .== "Visitor_number_parcels_aware", "Value"][1]	
+	Visitor_alphas = PreferenceMatrix[!, "visitor"][1:4]
+	Visitor_alpha_std = PreferenceMatrix[!, "visitor"][5]
+	Visitor_alphas = setup_alphas(Visitor_alphas, Visitor_alpha_std)
 
 	# -- Landlord agent information
 	Landlord_budget_mean = input[input[:,"Variable"] .== "Landlord_budget_mean", "Value"][1]
@@ -932,6 +925,13 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 	Landlord_number_parcels_aware = input[input[:,"Variable"] .== "Landlord_number_parcels_aware", "Value"][1]	
 	Landlord_number_searching = input[input[:,"Variable"] .== "Landlord_number_searching", "Value"][1]	
 	Landlord_transition_penalty = input[input[:,"Variable"] .== "Landlord_transition_penalty", "Value"][1]
+	Landlord_alphas_RR = PreferenceMatrix[!, "rentl_res"][1:4]
+	Landlord_alpha_RR_std = PreferenceMatrix[!, "rentl_res"][5]	
+	Landlord_alphas_LOSR = PreferenceMatrix[!, "losr"][1:4]
+	Landlord_alpha_LOSR_std = PreferenceMatrix[!, "losr"][5]
+
+	Landlord_alphas_RR = setup_alphas(Landlord_alphas_RR, Landlord_alpha_RR_std)
+	Landlord_alphas_LOSR = setup_alphas(Landlord_alphas_LOSR, Landlord_alpha_LOSR_std)
 	Landlord_budget = setup_budget(Landlord_budget_mean, Landlord_budget_std)
 
 
@@ -941,7 +941,17 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 	Company_price_goods = input[input[:,"Variable"] .== "Company_price_goods", "Value"][1]
 	Company_number_parcels_aware = input[input[:,"Variable"] .== "Company_number_parcels_aware", "Value"][1]
 	Company_number_searching = input[input[:,"Variable"] .== "Company_number_searching", "Value"][1]	
+	Company_alphas_HOR = PreferenceMatrix[!, "hor"][1:4]
+	Company_alpha_HOR_std = PreferenceMatrix[!, "hor"][5]	
+	Company_alphas_HOSR = PreferenceMatrix[!, "hosr"][1:4]
+	Company_alpha_HOSR_std = PreferenceMatrix[!, "hosr"][5]
+
+	Company_alphas_HOR = setup_alphas(Company_alphas_HOR, Company_alpha_HOR_std)
+	Company_alphas_HOSR = setup_alphas(Company_alphas_HOSR, Company_alpha_HOSR_std)
 	Company_budget = setup_budget(Company_budget_mean, Company_budget_std)
+
+	# -- Real estate agent information
+	RealEstate_LandBasePrice = input[input[:,"Variable"] .== "RealEstate_LandBasePrice", "Value"][1]
 
 
 	# --- conversions to correct datatypes
@@ -966,39 +976,39 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 		
 		nhousehold_dist=nhousehold_dist,
 		nvisitor_dist=nvisitor_dist,
-		Household_alphas=Household_alphas,
-		Visitor_alphas=Visitor_alphas,
-
 		age_dist=age_dist,
-
-		Unoccupied_budget=Unoccupied_budget,
-		Unoccupied_price_goods=Unoccupied_price_goods,
 		
 		Individual_budget=Individual_budget,
 		Individual_price_goods=Individual_price_goods,
 		Individual_number_parcels_aware=Individual_number_parcels_aware,
 		Individual_household_change_dist=Individual_household_change_dist,
+		Household_alphas=Household_alphas,
 
 		Visitor_number_parcels_aware=Visitor_number_parcels_aware,
+		Visitor_alphas=Visitor_alphas,
 
 		Landlord_budget=Landlord_budget,
 		Landlord_price_goods=Landlord_price_goods,
 		Landlord_number_parcels_aware=Landlord_number_parcels_aware,
 		Landlord_number_searching=Landlord_number_searching,
 		Landlord_transition_penalty=Landlord_transition_penalty,
+		Landlord_alphas_RR=Landlord_alphas_RR,
+		Landlord_alphas_LOSR=Landlord_alphas_LOSR,
 
 		Company_budget=Company_budget,
 		Company_price_goods=Company_price_goods,
 		Company_number_parcels_aware=Company_number_parcels_aware,
 		Company_number_searching=Company_number_searching,
+		Company_alphas_HOR=Company_alphas_HOR,
+		Company_alphas_HOSR=Company_alphas_HOSR,
 
+		LandBasePrice=RealEstate_LandBasePrice,
 
 		FullTimeResident_growth_rate=FullTimeResident_growth_rate,
 		FullTimeResident_carrying_cap=FullTimeResident_carrying_cap,
 		Visitor_growth_rate=Visitor_growth_rate,
 		Visitor_carrying_cap=Visitor_carrying_cap,
 		)
-
 	return properties
 end
 
@@ -1122,15 +1132,28 @@ returns alpha values for agent preferences drawn from distributions
 scales alpha values to sum to 1
 """
 function alpha_calc(model::ABM, alpha_dists::Vector{<:Distribution})
+	alpha_vals = inner_alpha_calc(model, alpha_dists)
+	
+	while isnan(sum(alpha_vals)) # some alpha_vals are NaN
+		alpha_vals = inner_alpha_calc(model, alpha_dists)
+	end
+	return alpha_vals
+
+end
+
+function inner_alpha_calc(model::ABM, alpha_dists::Vector{<:Distribution})
 	alpha_vals = Vector{Float64}(undef, length(alpha_dists))
 	for i in eachindex(alpha_dists)
-		rv = rand(model.rng, alpha_dists[i], 1)[1]
-		rv < 0 && (rv = 0)
-		alpha_vals[i] = rv
+		if mean(alpha_dists[i]) != 0
+			rv = rand(model.rng, alpha_dists[i], 1)[1]
+			rv < 0.01 && (rv = 0)	# if less than 0.01, assume 0 and not important for agent
+			alpha_vals[i] = rv
+		else
+			alpha_vals[i] = 0
+		end
 	end
 	alpha_vals .= alpha_vals./sum(alpha_vals)
 	return alpha_vals
-
 end
 
 """

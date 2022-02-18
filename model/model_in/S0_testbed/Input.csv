@@ -55,3 +55,4 @@ Company_number_searching,3,Constant number of companies in model space searching
 Visitor_number_parcels_aware,10,number of parcels agent is aware of when searching market
 Visitor_alpha1,0.6,Alpha1 parameterizing utility function; preference for distance to coast; Rental Residential
 Visitor_alpha2,0.4,Alpha2 parameterizing utility function; preference for distance to CBD
+RealEstate_LandBasePrice,150,Base price for land for real estate agent
