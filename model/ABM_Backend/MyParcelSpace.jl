@@ -12,6 +12,11 @@ cnt_hor_prcls(model) = count(lu=="hor" for lu in GetParcelsAttribute(model, mode
 cnt_hosr_prcls(model) = count(lu=="hosr" for lu in GetParcelsAttribute(model, model.space.landuse))
 cnt_comm_prcls(model) = count(lu=="commercial" for lu in GetParcelsAttribute(model, model.space.landuse))
 
+cnt_pre_prcls(model) = count(bc=="Pre - Code" for bc in GetParcelsAttribute(model, model.space.dgn_lvl))
+cnt_low_prcls(model) = count(bc=="Low - Code" for bc in GetParcelsAttribute(model, model.space.dgn_lvl))
+cnt_mod_prcls(model) = count(bc=="Moderate - Code" for bc in GetParcelsAttribute(model, model.space.dgn_lvl))
+cnt_hgh_prcls(model) = count(bc=="High - Code" for bc in GetParcelsAttribute(model, model.space.dgn_lvl))
+
 
 function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 	s = Array{Vector{Int},1}(undef, d)
@@ -30,6 +35,7 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 	STRCT_TYPS = Array{Vector{String},1}(undef, d)
 	YEAR_BUILTs = Array{Vector{Int},1}(undef, d)
 	NO_STORIESs = Array{Vector{Int},1}(undef, d)
+	DGN_LVLs = Array{Vector{String},1}(undef, d)
 
 	# damage stuff
 	LS_0s = Array{Vector{Float64},1}(undef, d)
@@ -62,6 +68,7 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 			STRCT_TYPS[i] = String[p["struct_typ"]]
 			YEAR_BUILTs[i] = Int[p["year_built"]]
 			NO_STORIESs[i] = Int[p["no_stories"]]
+			DGN_LVLs[i] = String[p["dgn_lvl"]]
 			
 			LS_0s[i] = Float64[0.0]
 			LS_1s[i] = Float64[0.0]
@@ -90,6 +97,7 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 			STRCT_TYPS[i] = String[]
 			YEAR_BUILTs[i] = Int[]
 			NO_STORIESs[i] = Int[]
+			DGN_LVLs[i] = String[]
 
 			LS_0s[i] = Float64[]
 			LS_1s[i] = Float64[]
@@ -118,6 +126,7 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 			STRCT_TYPS[i] = String[]
 			YEAR_BUILTs[i] = Int[]
 			NO_STORIESs[i] = Int[]
+			DGN_LVLs[i] = String[]
 
 			LS_0s[i] = Float64[]
 			LS_1s[i] = Float64[]
@@ -146,6 +155,7 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 			STRCT_TYPS[i] = String[]
 			YEAR_BUILTs[i] = Int[]
 			NO_STORIESs[i] = Int[]
+			DGN_LVLs[i] = String[]
 
 			LS_0s[i] = Float64[]
 			LS_1s[i] = Float64[]
@@ -178,6 +188,7 @@ function ParcelSpace(df::DataFrames.DataFrame, d::Int)
 					strct_typ=STRCT_TYPS,
 					year_built=YEAR_BUILTs,
 					no_stories=NO_STORIESs,
+					dgn_lvl=DGN_LVLs, 
 
 					LS_0=LS_0s,
 					LS_1=LS_1s,
@@ -292,11 +303,8 @@ Loops through parcels in the model. appends values to 'attrs'
 'attrs' must be pre-allocated
 """
 function _loop_parcels!(model, model_field::Vector{Vector{T}}, attrs::Vector{T}) where T
-	# todo: confirm that pos2cell isn't actually necessary here
 	guid_vec = vcat(model.space.guid...)
 	for i = 1:model.n_prcls
-		# attrs[i] = model_field[pos2cell(model.space.guid[i][1], guid_vec)][1]
-		# println(pos2cell(model.space.guid[i][1], guid_vec))
 		attrs[i] = model_field[i][1]
 	end
 end
@@ -326,6 +334,7 @@ function GetAgentIdsNotInParcel(model::ABM{<:ParcelSpace, A}) where {A<:Abstract
 	return IDs
 end
 
+
 function GetAgentIdsNotInParcel(model::ABM{<:ParcelSpace, A}, agent_type) where {A<:AbstractAgent}
 	# IDs = model.space.s[pos2cell("none", model)]
 	IDs_f = model.space.s[pos2cell("none", model)]
@@ -336,6 +345,24 @@ function GetAgentIdsNotInParcel(model::ABM{<:ParcelSpace, A}, agent_type) where 
 	for ID in IDs
 		if typeof(model[ID])==agent_type
 			push!(IDs_type, ID)
+		end
+	end
+	return IDs_type
+end
+
+"""
+	GetAgentIdsInParcel(model, agent_type)
+returns agent ids in parcel of a particular agent type
+"""
+function GetAgentIdsInParcel(model::ABM{<:ParcelSpace, A}, agent_type) where {A<:AbstractAgent}
+	IDs = allids(model)
+
+	IDs_type = Int64[]
+	for ID in IDs
+		if typeof(model[ID])==agent_type
+			if ~occursin("none", model[ID].pos)
+				push!(IDs_type, ID)
+			end
 		end
 	end
 	return IDs_type
@@ -410,12 +437,12 @@ end
 
 
 """
-	simulate_parcel_transaction!(agent1::LandlordAgent, agent2::IndividualAgent, model)
-if agent1 is a LandlordAgent and agent2 is an IndividualAgent, 
+	simulate_parcel_transaction!(agent1::LandlordAgent, agent2::HouseholdAgent, model)
+if agent1 is a LandlordAgent and agent2 is an HouseholdAgent, 
 then this function adds agent2 to the parcel that agent1 owns.
 e.g., agent2 is renting from agent1.
 """
-function simulate_parcel_transaction!(agent1::LandlordAgent, agent2::IndividualAgent, model::ABM)
+function simulate_parcel_transaction!(agent1::LandlordAgent, agent2::HouseholdAgent, model::ABM)
 	a1_pos = agent1.pos
 	a1_pos_idx = agent1.pos_idx
 
@@ -428,12 +455,12 @@ function simulate_parcel_transaction!(agent1::LandlordAgent, agent2::IndividualA
 end
 
 """
-	simulate_parcel_transaction!(agent1::CompanyAgent, agent2::IndividualAgent, model)
-if agent1 is a CompanyAgent and agent2 is an IndividualAgent, 
+	simulate_parcel_transaction!(agent1::FirmAgent, agent2::HouseholdAgent, model)
+if agent1 is a FirmAgent and agent2 is an HouseholdAgent, 
 then this function adds agent2 to the parcel that agent1 owns.
 e.g., agent2 is renting from agent1.
 """
-function simulate_parcel_transaction!(agent1::CompanyAgent, agent2::IndividualAgent, model::ABM)
+function simulate_parcel_transaction!(agent1::FirmAgent, agent2::HouseholdAgent, model::ABM)
 	a1_pos = agent1.pos
 	a1_pos_idx = agent1.pos_idx
 
@@ -446,9 +473,9 @@ function simulate_parcel_transaction!(agent1::CompanyAgent, agent2::IndividualAg
 end
 
 """
-	simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::CompanyAgent, model)
-If a company takes over and converts to hosr, add visitors to parcel and udpate model counts
-This will ensure that not too many company agents enter market at one step
+	simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::FirmAgent, model)
+If a firm takes over and converts to hosr, add visitors to parcel and udpate model counts
+This will ensure that not too many firm agents enter market at one step
 """
 function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::AbstractAgent, LU::String, model::ABM)
 	a1_pos = agent1.pos 	# parcel that is being traded
@@ -464,11 +491,11 @@ function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::Abst
 end
 
 """
-	simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::CompanyAgent, model)
-If a company takes over and converts to hosr, add visitors to parcel and udpate model counts
-This will ensure that not too many company agents enter market at one step
+	simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::FirmAgent, model)
+If a firm takes over and converts to hosr, add visitors to parcel and udpate model counts
+This will ensure that not too many firm agents enter market at one step
 """
-function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::CompanyAgent, LU::String, model::ABM)
+function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::FirmAgent, LU::String, model::ABM)
 	a1_pos = agent1.pos 	# parcel that is being traded
 	a1_pos_idx = agent1.pos_idx
 	
@@ -614,7 +641,7 @@ Add the agent to the `model` at the agent's own position.
 if 'init' is true/present, then the agent is simply added
 if 'init' not present, then the landuse is updated (e.g., it's not the first time 'add_agent_pos' is called)
 if it's a landlord agent, check whethe landuse is initially 'rental_res' or 'losr'
-	if 'rental_res', then add an individual agent to the same space
+	if 'rental_res', then add an household agent to the same space
 """
 function add_agent_pos_owner!(agent::AbstractAgent, model::ABM; init::Bool)
 	model[agent.id] = agent
@@ -642,7 +669,7 @@ function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool, n_pe
 			id = next_avail_id(model)
 			pos = agent.pos
 			alphas = alpha_calc(model, model.Household_alphas)
-			a2 = IndividualAgent(
+			a2 = HouseholdAgent(
 				id=id,
 				pos=pos,
 				pos_idx=pos2cell(pos, model),
@@ -650,9 +677,9 @@ function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool, n_pe
 				alpha2=alphas[2],
 				alpha3=alphas[3],
 				alpha4=alphas[4],
-				budget=budget_calc(model, model.Individual_budget),
-				price_goods=model.Individual_price_goods,
-				number_prcls_aware=model.Individual_number_parcels_aware,
+				budget=budget_calc(model, model.Household_budget),
+				price_goods=model.Household_price_goods,
+				number_prcls_aware=model.Household_number_parcels_aware,
 				prcl_on_mrkt=false,
 				prcl_on_visitor_mrkt=false,
 				looking_to_purchase=false,
@@ -660,7 +687,7 @@ function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool, n_pe
 				age=age_calc(model.age_dist, model),
 				own_parcel=false,
 				num_people=n_people,
-				household_change_times=get_household_change_times(model.Individual_household_change_dist, model)
+				household_change_times=get_household_change_times(model.Household_change_dist, model)
 
 			)
 			add_agent_pos_renter!(a2, model)
@@ -689,7 +716,7 @@ function add_agent_pos_owner!(agent::LandlordAgent, model::ABM; init::Bool, n_pe
 	return agent
 end
 
-function add_agent_pos_owner!(agent::CompanyAgent, model::ABM; init::Bool, n_people::Int64)
+function add_agent_pos_owner!(agent::FirmAgent, model::ABM; init::Bool, n_people::Int64)
 	model[agent.id] = agent 		# adding agent to model
 	agent.own_parcel = true			# does the landlord agent own the parcel
 	_add_agent_to_space_owner!(agent, model) 	# adding landlord agent to model space
@@ -715,7 +742,7 @@ function add_agent_pos_owner!(agent::CompanyAgent, model::ABM; init::Bool, n_peo
 			id = next_avail_id(model)
 			pos = agent.pos
 			alphas = alpha_calc(model, model.Household_alphas)
-			a2 = IndividualAgent(
+			a2 = HouseholdAgent(
 				id=id,
 				pos=pos,
 				pos_idx=pos2cell(pos, model),
@@ -723,9 +750,9 @@ function add_agent_pos_owner!(agent::CompanyAgent, model::ABM; init::Bool, n_peo
 				alpha2=alphas[2],
 				alpha3=alphas[3],
 				alpha4=alphas[4],
-				budget=budget_calc(model, model.Individual_budget),
-				price_goods=model.Individual_price_goods,
-				number_prcls_aware=model.Individual_number_parcels_aware,
+				budget=budget_calc(model, model.Household_budget),
+				price_goods=model.Household_price_goods,
+				number_prcls_aware=model.Household_number_parcels_aware,
 				prcl_on_mrkt=false,
 				prcl_on_visitor_mrkt=false,
 				looking_to_purchase=false,
@@ -733,7 +760,7 @@ function add_agent_pos_owner!(agent::CompanyAgent, model::ABM; init::Bool, n_peo
 				age=age_calc(model.age_dist, model),
 				own_parcel=false,
 				num_people=n_people_prcl,
-				household_change_times=get_household_change_times(model.Individual_household_change_dist, model)
+				household_change_times=get_household_change_times(model.Household_change_dist, model)
 			)
 			add_agent_pos_renter!(a2, model)
 			n_people_added += n_people_prcl
@@ -779,7 +806,7 @@ end
 # end
 
 
-function add_agent_pos_owner!(agent::CompanyAgent, lu::String, model::ABM)
+function add_agent_pos_owner!(agent::FirmAgent, lu::String, model::ABM)
 	model[agent.id] = agent
 	agent.own_parcel = true
 	_add_agent_to_space_owner!(agent, model)
@@ -788,7 +815,7 @@ function add_agent_pos_owner!(agent::CompanyAgent, lu::String, model::ABM)
 end
 
 
-function add_agent_pos_renter!(agent::IndividualAgent, model::ABM)
+function add_agent_pos_renter!(agent::HouseholdAgent, model::ABM)
 	model[agent.id] = agent
 	agent.own_parcel = false
 	_add_agent_to_space_renter!(agent, model)
@@ -813,7 +840,7 @@ function _add_agent_to_space_owner!(a::A, model::ABM{<:ParcelSpace,A}) where {A<
 end
 
 
-function _add_agent_to_space_renter!(a::IndividualAgent, model::ABM)
+function _add_agent_to_space_renter!(a::HouseholdAgent, model::ABM)
 	push!(model.space.s[a.pos_idx], a.id)
 end
 
@@ -874,28 +901,62 @@ updates the landuse associated with the parcel
 function update_landuse!(agent::AbstractAgent, model::ABM, landuse::Vector{String})
 	model.space.prev_landuse[agent.pos_idx] = model.space.landuse[agent.pos_idx]
 	model.space.landuse[agent.pos_idx] = landuse
+	
+
 	if landuse == ["unoccupied"]
 		model.space.max_n_agents[agent.pos_idx] = [1]
-	elseif landuse == ["owned_res"]
-		model.space.max_n_agents[agent.pos_idx] = [1]
-	elseif landuse==["rentl_res"]
-		model.space.max_n_agents[agent.pos_idx] = [2]
-	elseif landuse==["losr"]
-		model.space.max_n_agents[agent.pos_idx] = [2]
-	elseif landuse==["hor"]
-		model.space.max_n_agents[agent.pos_idx] = [5]	# todo: figure out how big this should be
-		model.space.strct_typ[agent.pos_idx] = ["RC"]
-		model.space.year_built[agent.pos_idx] = [2021]
-		model.space.no_stories[agent.pos_idx] = [6]
-	elseif landuse==["hosr"]
-		model.space.max_n_agents[agent.pos_idx] = [15]	# todo: figure out how big this should be
-		model.space.strct_typ[agent.pos_idx] = ["RC"]
-		model.space.year_built[agent.pos_idx] = [2021]
-		model.space.no_stories[agent.pos_idx] = [6]
+
+	else
+		if landuse == ["owned_res"]
+			model.space.max_n_agents[agent.pos_idx] = [1]
+
+		elseif landuse==["rentl_res"]
+			model.space.max_n_agents[agent.pos_idx] = [2]
+		
+		elseif landuse==["losr"]
+			model.space.max_n_agents[agent.pos_idx] = [2]
+		
+		elseif landuse==["hor"]
+			model.space.max_n_agents[agent.pos_idx] = [5]	# todo: figure out how big this should be
+			model.space.strct_typ[agent.pos_idx] = ["RC"]
+			model.space.no_stories[agent.pos_idx] = [5]		# assuming high-rise for fragility curves (no_stories GE 4)
+
+		elseif landuse==["hosr"]
+			model.space.max_n_agents[agent.pos_idx] = [25]	# todo: figure out how big this should be
+			model.space.strct_typ[agent.pos_idx] = ["RC"]
+			model.space.no_stories[agent.pos_idx] = [5]		# assuming high-rise for fragility curves (no_stories GE 4)
+		end
+
+		prev_lu = model.space.prev_landuse[agent.pos_idx]
+		bc_rq, code_level, _ = check_bc_update(model, prev_lu[1], landuse[1], model.space.dgn_lvl[agent.pos_idx][1])
+		if bc_rq == true
+			model.space.year_built[agent.pos_idx] = [model.BuildingCode2Year[code_level]]
+			model.space.dgn_lvl[agent.pos_idx] = [code_level]
+		end
 	end
 end
 
+function check_bc_update(model, prev_lu, to_landuse, current_code)
+	bc = model.building_codes[model.building_codes[:,"from"].==prev_lu, :]
+	bc = bc[bc[:,"to"].==to_landuse,:]
+	code_level = bc[:,"to_code_level"][1]
 
+	to_year = model.BuildingCode2Year[code_level]
+	cu_year = model.BuildingCode2Year[current_code]
+	# println(current_code, " ", code_level, " ", cu_year, " ", to_year)
+	if (bc[:, "required"][1]==true) & (cu_year<to_year)
+		BC_rq = true
+		code_level = code_level
+		rho = bc[:,"percent_cost"][1]
+		return BC_rq, code_level, rho
+	else
+		BC_rq = false
+		code_level = "None"
+		rho = 0
+		return BC_rq, code_level, rho
+	end
+
+end
 
 
 """ UpdateParcelAttr!()

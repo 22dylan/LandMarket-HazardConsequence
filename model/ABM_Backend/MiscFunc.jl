@@ -8,6 +8,9 @@ function read_input_folder(path::String)
 	dirs = String[]
 	for f in all_in_dir
 		if '.' in f
+			if occursin("DS_Store", f) # ignoring DS_Store file
+				continue
+			end
 			push!(files, f)
 		else
 			push!(dirs, f)
@@ -18,6 +21,7 @@ function read_input_folder(path::String)
 	for f in files
 		key = split(f, ".")[1]
 		f = joinpath(path, f)
+
 		input_dict[key] = read_csv(f)
 	end
 	return input_dict

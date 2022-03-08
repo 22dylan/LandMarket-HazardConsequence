@@ -80,6 +80,7 @@ function main(model_runname)
 			:strct_typ, 
 			:year_built, 
 			:no_stories, 
+			:dgn_lvl,
 			:MC_DS, 
 			:AVG_DS,
 			:LS_0,
@@ -98,22 +99,28 @@ function main(model_runname)
 			:n_HOSR,
 			:n_comm,
 
+			# building code counts
+			:n_precode,
+			:n_lowcode,
+			:n_modcode,
+			:n_hghcode,
+
 			# agent counts
 			:n_unoccupied_inparcel,
 			:n_unoccupied_searching,
 			:n_unoccupied_total,
 
-			:n_individuals_inparcel,
-			:n_individuals_searching,
-			:n_individuals_total,
+			:n_households_inparcel,
+			:n_households_searching,
+			:n_households_total,
 
 			:n_landlords_inparcel,
 			:n_landlords_searching,
 			:n_landlords_total,
 
-			:n_companies_inparcel,
-			:n_companies_searching,
-			:n_companies_total,
+			:n_firms_inparcel,
+			:n_firms_searching,
+			:n_firms_total,
 
 			:n_visitoragents_inparcel,
 			:n_visitoragents_searching,
@@ -248,8 +255,9 @@ end
 
 
 # ------------
-# model_runname = "S0_testbed"
-model_runname = "S0_StatusQuo"
+
+model_runname = "S0_StatusQuo_YR30_CSZ500"
+
 
 println()
 println("Running Model: $model_runname")

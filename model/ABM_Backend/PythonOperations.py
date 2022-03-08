@@ -82,9 +82,6 @@ class misc_python_ops():
 		prcl_df = prcl_df[cols]
 		print(prcl_df['landuse'].value_counts())
 
-		# print(prcl_df.loc[prcl_df["guid"]=="85a87f8a-3a0d-4759-bcb5-039f7914c3f7", "d_commasst"])
-		# print(prcl_df.loc[prcl_df["guid"]=="93e1e093-2797-4f7f-9e30-758be6500529", "d_commasst"])
-
 		return prcl_df
 
 
@@ -250,122 +247,160 @@ class misc_python_ops():
 		numprec = []		# number of people
 		agnt_typ = []
 		max_n_agents = []
+		
+
+
+		agnt_typ_dict = {
+					"unoccupied": 'unocc_owner',
+					"owned_res": 'household',
+					"rentl_res": 'landlord',
+					"losr": 'landlord',
+					"hosr": 'firm',
+					"hor": 'firm',
+					"commercial": 'firm'
+					}
+		max_n_agent_dict = {
+					"unoccupied": 1,
+					"owned_res": 1,
+					"rentl_res": 2,
+					"losr": 2,
+					"hosr": 30,
+					"hor": 5,
+					"commercial": 1 
+					}
 		cnt = 0
 		for index, row in hua_df.iterrows():
 			if index in comm_bldgs['guid'].values:
-				landuse.append('commercial')
+				lu = "commercial"
+				landuse.append(lu)
 				numprec.append(0)
-				agnt_typ.append('company')
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 				continue
 
 			if (row.vacancy==0) & (row.ownershp==1): # ownershp=1: owned
-				landuse.append('owned_res')
+				lu = "owned_res"
+				landuse.append(lu)
 				numprec.append(row.numprec)
-				agnt_typ.append('individual')
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 
 
 			elif (row.vacancy==0) & (row.ownershp==2): # ownershp=2: rented
 				if row.no_stories <= 2:
-					landuse.append('rentl_res')
-					agnt_typ.append('landlord')
-					max_n_agents.append(2)
+					lu = 'rentl_res'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				else:
-					landuse.append('hor')
-					agnt_typ.append('company')
-					max_n_agents.append(4)
+					lu = 'hor'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				numprec.append(row.numprec)
 
 			elif (row.vacancy==0) & (row.ownershp==3): # ownershp=3: seasonal rental
 				if row.no_stories <= 2:
-					landuse.append('losr')
-					agnt_typ.append('landlord')
-					max_n_agents.append(1)
+					lu = "losr"
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 
 				else:
-					landuse.append('hosr')
-					agnt_typ.append('company')
-					max_n_agents.append(5)
+					lu = 'hosr'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				numprec.append(row.numprec)
 
 			elif (row.vacancy==0):	# these are group quarters; assuming high occupancy res
-				landuse.append('hor')
+				lu = 'hor'
+				landuse.append(lu)
 				numprec.append(row.numprec)
-				agnt_typ.append('company')
-				max_n_agents.append(4)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 
 
 			# --- following are vacant; ensure nobody is in property
 			elif (row.vacancy==1): # for rent
-				landuse.append('unoccupied')
+				lu = 'unoccupied'
+				landuse.append(lu)
 				numprec.append(0)
-				agnt_typ.append('unocc_owner')
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 
 
 
 			elif (row.vacancy==2): # rented, unoccupied
 				if row.no_stories <= 2:
-					landuse.append('rentl_res')
-					agnt_typ.append('landlord')
-					max_n_agents.append(2)
+					lu = 'rentl_res'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				else:
-					landuse.append('hor')
-					agnt_typ.append('company')
-					max_n_agents.append(4)
+					lu = 'hor'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 
 				numprec.append(row.numprec)
 
 			elif (row.vacancy==3): # for sale
-				landuse.append('unoccupied')
+				lu = 'unoccupied'
+				landuse.append(lu)
 				numprec.append(0)
-				agnt_typ.append('unocc_owner')
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 
 			elif (row.vacancy == 4):	# sold, unoccupied
-				landuse.append('owned_res')
+				lu = 'owned_res'
+				landuse.append(lu)
 				numprec.append(row.numprec)
-				agnt_typ.append('individual')
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 
 			elif (row.vacancy==5):	# seasonal/recreational use
 				if row.no_stories <= 2:
-					landuse.append('losr')
-					agnt_typ.append('landlord')
-					max_n_agents.append(2)
+					lu = 'losr'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				else:
-					landuse.append('hosr')
-					agnt_typ.append('company')
-					max_n_agents.append(5)
+					lu = 'hosr'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				numprec.append(0)
 
 			elif (row.vacancy==6):	# migrant workers; assuming seaonal rental
 				if row.no_stories <= 2:
-					landuse.append('losr')
-					agnt_typ.append('landlord')
-					max_n_agents.append(1)
+					lu = 'losr'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				else:
-					agnt_typ.append('company')
-					landuse.append('hosr')
-					max_n_agents.append(5)
+					lu = 'hosr'
+					landuse.append(lu)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
 				numprec.append(0)
 
 			elif (row.vacancy==7):	# other vacant
-				landuse.append('unoccupied')
+				lu = 'unoccupied'
+				landuse.append(lu)
 				numprec.append(0)
-				agnt_typ.append("unocc_owner")
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 
 
 
@@ -373,39 +408,32 @@ class misc_python_ops():
 			elif row.vacancy != row.vacancy:	# check (pythonically) if vacancy is nan		
 				if row.no_stories > 2:
 					if row.numprec == 0:
-						landuse.append("unoccupied")
+						lu = 'unoccupied'
+						landuse.append(lu)
 						numprec.append(row.numprec)
-						agnt_typ.append("unocc_owner")
-						max_n_agents.append(1)
+						agnt_typ.append(agnt_typ_dict[lu])
+						max_n_agents.append(max_n_agent_dict[lu])
 					else:
-						landuse.append("hor")
+						lu = 'hor'
+						landuse.append(lu)
 						numprec.append(row.numprec)
-						agnt_typ.append("company")
-						max_n_agents.append(4)
+						agnt_typ.append(agnt_typ_dict[lu])
+						max_n_agents.append(max_n_agent_dict[lu])
 
 				else:
-					landuse.append("commercial")
+					lu = 'commercial'
+					landuse.append(lu)
 					numprec.append(0)
-					agnt_typ.append("company")
-					max_n_agents.append(1)
+					agnt_typ.append(agnt_typ_dict[lu])
+					max_n_agents.append(max_n_agent_dict[lu])
 
-
-					# landuse.append("unoccupied")
-					# numprec.append(0)
-					# agnt_typ.append("unocc_owner")
-					# max_n_agents.append(1)
-
-
-					# landuse.append("owned_res")
-					# numprec.append(row.numprec)
-					# agnt_typ.append("individual")
-					# max_n_agents.append(1)
 
 			else:
-				landuse.append('unoccupied')
+				lu = 'unoccupied'
+				landuse.append(lu)
 				numprec.append(0)
-				agnt_typ.append("unocc_owner")
-				max_n_agents.append(1)
+				agnt_typ.append(agnt_typ_dict[lu])
+				max_n_agents.append(max_n_agent_dict[lu])
 		
 
 		hua_df['landuse'] = landuse
@@ -458,11 +486,12 @@ class misc_python_ops():
 		return True
 
 
-	def pyincore_CSZ(self, guids, strct_typ, year_built, no_stories, x, y, rt):
+	def pyincore_CSZ(self, guids, strct_typ, year_built, dgn_lvl, no_stories, x, y, rt):
 		# setting up dataframe from output of Julia
 		prcl_df = pd.DataFrame({"guid": guids,
 								"struct_typ": strct_typ,
-								"year_built": year_built,
+								# "year_built": year_built,
+								"dgn_lvl": dgn_lvl,
 								"no_stories": no_stories,
 								"x": x,
 								"y": y
@@ -470,7 +499,7 @@ class misc_python_ops():
 
 		# setting up geodataframe from above
 		prcl_df = gpd.GeoDataFrame(prcl_df, geometry=gpd.points_from_xy(prcl_df.x, prcl_df.y))
-		prcl_df = prcl_df[['guid', 'struct_typ', 'year_built', 'no_stories', 'geometry']]
+		prcl_df = prcl_df[['guid', 'struct_typ', 'dgn_lvl', 'no_stories', 'geometry']]
 		prcl_df = prcl_df.set_crs(26910)
 		prcl_df = prcl_df.to_crs(4326)
 
@@ -499,7 +528,8 @@ class misc_python_ops():
 		bldg_dmg.set_input_dataset("buildings", bldg_ds)
 
 		# specifiying mapping id from fragilites to building types
-		mapping_id = "5d2789dbb9219c3c553c7977"
+		# mapping_id = "5d2789dbb9219c3c553c7977"	# by yearbuilt
+		mapping_id = "622107be2111ec2b50074084"		# by design level
 		mapping_set = MappingSet(fragility_service.get_mapping(mapping_id))
 		bldg_dmg.set_input_dataset('dfr3_mapping_set', mapping_set)
 
@@ -521,7 +551,8 @@ class misc_python_ops():
 		bldg_dmg.set_input_dataset("buildings", bldg_ds)
 
 		# specifiying mapping id from fragilites to building types
-		mapping_id = "5d279bb9b9219c3c553c7fba"
+		# mapping_id = "5d279bb9b9219c3c553c7fba"	# by yearbuilt
+		mapping_id = "622107fb5ff45d259beb46b3"		# by design level
 		mapping_set = MappingSet(fragility_service.get_mapping(mapping_id))
 		bldg_dmg.set_input_dataset('dfr3_mapping_set', mapping_set)
 

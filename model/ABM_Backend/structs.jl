@@ -3,6 +3,15 @@ File for defining structs that are used in model.
 Includes structs for model parameters, agents, and space
 =#
 
+
+# struct BuildingCode2Year
+# 	pre::Int64
+# 	low::Int64
+# 	mod::Int64
+# 	high::Int64
+# end
+
+
 Base.@kwdef mutable struct Parameters
 	# model values
 	tick::Int64 = 1
@@ -10,6 +19,7 @@ Base.@kwdef mutable struct Parameters
 	hazard_recurrence::Int64
 	distance_decay_exponent::Float64
 	zoning_params::DataFrame
+	building_codes::DataFrame
 	progress_bar::Progress 
 	n_prcls::Int64
 
@@ -17,11 +27,13 @@ Base.@kwdef mutable struct Parameters
 	nvisitor_dist::Distribution
 	age_dist::Distribution
 
-	# Individual/Household agent
-	Individual_budget
-	Individual_price_goods::Float64
-	Individual_number_parcels_aware::Int64
-	Individual_household_change_dist::Distribution
+	BuildingCode2Year::Dict
+
+	# Household agent
+	Household_budget
+	Household_price_goods::Float64
+	Household_number_parcels_aware::Int64
+	Household_change_dist::Distribution
 	Household_alphas
 	
 	# Visitor agent
@@ -37,27 +49,24 @@ Base.@kwdef mutable struct Parameters
 	Landlord_alphas_RR
 	Landlord_alphas_LOSR
 
-	# Company agent
-	Company_budget
-	Company_price_goods::Float64
-	Company_number_parcels_aware::Int64
-	Company_number_searching::Int64
-	Company_alphas_HOR
-	Company_alphas_HOSR
+	# Firm agent
+	Firm_budget
+	Firm_price_goods::Float64
+	Firm_number_parcels_aware::Int64
+	Firm_number_searching::Int64
+	Firm_alphas_HOR
+	Firm_alphas_HOSR
+	Firm_alphas_COMM
 	
 	# people counts/population growth
-	FullTimeResident_growth_rate::Float64
-	FullTimeResident_carrying_cap::Float64
-	FullTimeResident_init::Float64 = 0
+	FullTimeResident_PopulationVector::Vector{Int64}
 	FullTimeResidents_inparcel::Int64 = 0
 	FullTimeResidents_searching::Int64 = 0
 	FullTimeResidents_total::Int64 = 0
 	FullTimeResidents_vacancy::Int64 = 0
 
 	# visitor counts/growth
-	Visitor_growth_rate::Float64
-	Visitor_carrying_cap::Float64
-	Visitor_init::Float64 = 0
+	Visitor_PopulationVector::Vector{Int64}
 	Visitors_inparcel::Int64 = 0
 	Visitors_searching::Int64 = 0
 	Visitors_total::Int64 = 0
@@ -66,23 +75,22 @@ Base.@kwdef mutable struct Parameters
 	# Real Estate Agent
 	LandBasePrice::Float64 = 0.0
 	
-
 	# agent counts
 	n_unoccupied_inparcel::Int64 = 0
 	n_unoccupied_searching::Int64 = 0
 	n_unoccupied_total::Int64 = 0
 
-	n_individuals_inparcel::Int64 = 0
-	n_individuals_searching::Int64 = 0
-	n_individuals_total::Int64 = 0
+	n_households_inparcel::Int64 = 0
+	n_households_searching::Int64 = 0
+	n_households_total::Int64 = 0
 
 	n_landlords_inparcel::Int64 = 0
 	n_landlords_searching::Int64 = 0
 	n_landlords_total::Int64 = 0
 
-	n_companies_inparcel::Int64 = 0
-	n_companies_searching::Int64 = 0
-	n_companies_total::Int64 = 0
+	n_firms_inparcel::Int64 = 0
+	n_firms_searching::Int64 = 0
+	n_firms_total::Int64 = 0
 
 	n_visitoragents_inparcel::Int64 = 0
 	n_visitoragents_searching::Int64 = 0
@@ -97,6 +105,15 @@ Base.@kwdef mutable struct Parameters
 	n_HOSR::Int64 = 0
 	n_comm::Int64 = 0
 
+	# cap on vacation rentals
+	max_n_LOSR::Int64 = 0
+
+	# building code counts
+	n_precode::Int64 = 0
+	n_lowcode::Int64 = 0
+	n_modcode::Int64 = 0
+	n_hghcode::Int64 = 0
+
 end
 
 
@@ -107,7 +124,7 @@ Base.@kwdef struct ParcelSpace <: Agents.AbstractSpace
 	landuse::Array{Vector{String},1}		# landuse
 	prev_landuse::Array{Vector{String},1}	# previous landuse
 	landvalue::Array{Vector{Float64},1}		# landuse
-	n_agents::Array{Vector{Int},1}			# number of agents associated with parcel (e.g., number of households, landlords, companys)
+	n_agents::Array{Vector{Int},1}			# number of agents associated with parcel (e.g., number of households, landlords, firms)
 	max_n_agents::Array{Vector{Int},1}		# maximum number of agents
 	n_people::Array{Vector{Int},1}			# number of people in parcel (actual num. of people)
 
@@ -118,6 +135,7 @@ Base.@kwdef struct ParcelSpace <: Agents.AbstractSpace
 	strct_typ::Array{Vector{String},1} 		# structure type
 	year_built::Array{Vector{Int},1}		# year built
 	no_stories::Array{Vector{Int},1}		# number of stories
+	dgn_lvl::Array{Vector{String},1}		# design level
 
 	LS_0::Array{Vector{Float64},1}			# limit state 0
 	LS_1::Array{Vector{Float64},1}			# limit state 1
@@ -145,7 +163,7 @@ Base.@kwdef mutable struct UnoccupiedOwnerAgent <: AbstractAgent
 	MC_bldg_dmg::Int = 0 
 end
 
-Base.@kwdef mutable struct IndividualAgent <: AbstractAgent
+Base.@kwdef mutable struct HouseholdAgent <: AbstractAgent
 	id::Int64
 	pos::String
 	pos_idx::Int64
@@ -204,7 +222,7 @@ Base.@kwdef mutable struct LandlordAgent <: AbstractAgent
 end
 
 
-Base.@kwdef mutable struct CompanyAgent <: AbstractAgent
+Base.@kwdef mutable struct FirmAgent <: AbstractAgent
 	id::Int
 	pos::String
 	pos_idx::Int64
@@ -216,6 +234,10 @@ Base.@kwdef mutable struct CompanyAgent <: AbstractAgent
 	alpha2_HOSR::Float64
 	alpha3_HOSR::Float64
 	alpha4_HOSR::Float64
+	alpha1_COMM::Float64
+	alpha2_COMM::Float64
+	alpha3_COMM::Float64
+	alpha4_COMM::Float64
 	budget::Float64
 	price_goods::Float64
 	number_prcls_aware::Int64
@@ -258,6 +280,7 @@ Base.@kwdef mutable struct RealEstateAgent <: AbstractAgent
 	pos_idx::Int64
 	LandBasePrice::Int64
 end
+
 
 
 

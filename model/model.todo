@@ -1,20 +1,23 @@
-
 Model TODO List:
- ☐ Setup distribution of number of hotel/apartment rooms for Seaside
- ☐ Keep daily population changes in mind (e.g., day and night simulations)
- ☐ Change "company" to "business"
- ☐ Change "individual" to "household"
- ☐ Figure out where AllAgentsStep!() should go
- ☐ Think about how hosr/hor may occupy multiple parcels
-     [] Could keep track of neighboring parcels
-     [] if an unoccupied parcel becomes available, have company make offer to neighbors
-     [] company has larger budget/WTP
-     [] property owner's WTA comes into play
  ☐ Run model under different policy options
      ☐ zoning
      ☐ distance based tax
      ☐ building codes for new construction
  ☐ Update population plot to show historical rate of Seaside population as well as projections
+     [] think about if it's possible to remove people randomly to match population projections
+
+
+Model Future TODO List:
+ ☐ Think about how hosr/hor may occupy multiple parcels
+   [] Could keep track of neighboring parcels
+   [] if an unoccupied parcel becomes available, have company make offer to neighbors
+   [] company has larger budget/WTP
+   [] property owner's WTA comes into play
+ ☐ Add commercial land use changes
+     [] dependent on population (seasonal and full time residents)
+ ☐ Keep daily population changes in mind (e.g., day and night simulations)
+ ☐ Setup distribution of number of hotel/apartment rooms for Seaside
+
 
 
 Model Ideas:
