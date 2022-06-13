@@ -30,7 +30,6 @@ PYTHON_OPS = setup_pycall()
 
 # ------------
 function main(model_runname)
-
 	input_folder = joinpath(pwd(), "model_in", model_runname)
 	input_dict = read_input_folder(input_folder)
 	df_input = input_dict["Input"]
@@ -197,6 +196,9 @@ function my_run!(model,
 	  step!(model, agent_step!, model_step!, 1)
 	  s += 1
 	end
+	if n == 0 		# special case where n_years == 0; above won't activate
+		step!(model, agent_step!, model_step!, 1)
+	end
 	if should_we_collect(s, model, when)
 		collect_agent_data!(df_agent, model, adata, s)
 		collect_model_data!(df_model, model, mdata, s)
@@ -239,31 +241,68 @@ end
 Function to collect space (parcel) data from model at each time step
 """
 function collect_space_data!(df, model, properties::Vector, step::Int = 0)
-    guid = GetParcelsAttribute(model, model.space.guid)
+	guid = GetParcelsAttribute(model, model.space.guid)
 
-    dd = DataFrame()
-    dd[!, :step] = fill(step, length(guid))
-    dd[!, :guid] = guid
-    for fn in properties
-    	data = GetParcelsAttribute(model, getfield(model.space, fn))
-        dd[!, fn] = data
-    end
-    append!(df, dd)
-    return df
+	dd = DataFrame()
+	dd[!, :step] = fill(step, length(guid))
+	dd[!, :guid] = guid
+	for fn in properties
+		data = GetParcelsAttribute(model, getfield(model.space, fn))
+		dd[!, fn] = data
+	end
+	append!(df, dd)
+	return df
 end
 
 
 
 # ------------
 
-model_runname = "S0_StatusQuo_YR30_CSZ500"
+#= TODO: 
+	- Run time steps for S2a
+	- Run 1000-year events (in sensitivity folder)
+=#
+model_runnames = [
 
 
-println()
-println("Running Model: $model_runname")
-println()
-main(model_runname)
+				# # Base scenarios (500-yr event)
+				# "S0_YR30_CSZ500",
+				# "S1a_YR30_CSZ500",
+				# "S1b_YR30_CSZ500",
+				# "S1c_YR30_CSZ500",
+				# "S2a_YR30_CSZ500",
+				# "S2b_YR30_CSZ500",
+				# "S2c_YR30_CSZ500",
+				# "S3a_YR30_CSZ500",
+				# "S3b_YR30_CSZ500",
+				# "S3c_YR30_CSZ500",
 
+				# "S2a_YR0_CSZ500",
+				# "S2a_YR5_CSZ500",
+				# "S2a_YR10_CSZ500",
+				# "S2a_YR15_CSZ500",
+				# "S2a_YR20_CSZ500",
+				# "S2a_YR25_CSZ500",
+
+				# "S0_YR30_CSZ1000",
+				# "S1a_YR30_CSZ1000",
+				# "S1b_YR30_CSZ1000",
+				# "S1c_YR30_CSZ1000",
+				# "S2a_YR30_CSZ1000",
+				# "S2b_YR30_CSZ1000",
+				# "S2c_YR30_CSZ1000",
+				"S3a_YR30_CSZ1000",
+				"S3b_YR30_CSZ1000",
+				"S3c_YR30_CSZ1000"
+
+			]
+
+for model_runname in model_runnames
+	println()
+	println("Running Model: $model_runname")
+	println()
+	main(model_runname)
+end
 
 
 

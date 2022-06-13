@@ -478,16 +478,18 @@ If a firm takes over and converts to hosr, add visitors to parcel and udpate mod
 This will ensure that not too many firm agents enter market at one step
 """
 function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::AbstractAgent, LU::String, model::ABM)
-	a1_pos = agent1.pos 	# parcel that is being traded
-	a1_pos_idx = agent1.pos_idx
-	
-	remove_agent_from_space!(agent2, model)	# removing agent2 from it's current position in the model
-	
-	agent2.pos = a1_pos		# udpating agent2's position
-	agent2.pos_idx = a1_pos_idx
+	if LU != "none"
+		a1_pos = agent1.pos 	# parcel that is being traded
+		a1_pos_idx = agent1.pos_idx
+		
+		remove_agent_from_space!(agent2, model)	# removing agent2 from it's current position in the model
+		
+		agent2.pos = a1_pos		# udpating agent2's position
+		agent2.pos_idx = a1_pos_idx
 
-	kill_agent!(agent1, model)		# removes agent1 (seller) from model
-	add_agent_pos_owner!(agent2, model, LU)	# adds agent2 (buyer) to model
+		kill_agent!(agent1, model)		# removes agent1 (seller) from model
+		add_agent_pos_owner!(agent2, model, LU)	# adds agent2 (buyer) to model
+	end
 end
 
 """
@@ -496,23 +498,21 @@ If a firm takes over and converts to hosr, add visitors to parcel and udpate mod
 This will ensure that not too many firm agents enter market at one step
 """
 function simulate_parcel_transaction!(agent1::UnoccupiedOwnerAgent, agent2::FirmAgent, LU::String, model::ABM)
-	a1_pos = agent1.pos 	# parcel that is being traded
-	a1_pos_idx = agent1.pos_idx
-	
-	remove_agent_from_space!(agent2, model)	# removing agent2 from it's current position in the model
-	
-	agent2.pos = a1_pos		# udpating agent2's position
-	agent2.pos_idx = a1_pos_idx
+	if LU != "none"
+		a1_pos = agent1.pos 	# parcel that is being traded
+		a1_pos_idx = agent1.pos_idx
+		
+		remove_agent_from_space!(agent2, model)	# removing agent2 from it's current position in the model
+		
+		agent2.pos = a1_pos		# udpating agent2's position
+		agent2.pos_idx = a1_pos_idx
 
-	kill_agent!(agent1, model)		# removes agent1 (seller) from model
-	add_agent_pos_owner!(agent2, model, LU)	# adds agent2 (buyer) to model
-	
-	if LU == "hosr" 	# if transitioning to hosr, simulate visitor market search
-		VisitorMarketSearch!(model, [agent2.id], shuff=true)
-	# elseif LU == "hor"	# if transitioning to hor, simulate full time resident market search
-	# 	bidders = GetBidders!(model, shuff=true)	
-	# 	SBTs, WTPs, LUs = MarketSearch(model, bidders, [agent2.id])
-	# 	ParcelTransaction!(model, bidders, SBTs, WTPs, LUs, [agent2.id])
+		kill_agent!(agent1, model)		# removes agent1 (seller) from model
+		add_agent_pos_owner!(agent2, model, LU)	# adds agent2 (buyer) to model
+		
+		if LU == "hosr" 	# if transitioning to hosr, simulate visitor market search
+			VisitorMarketSearch!(model, [agent2.id], shuff=true)
+		end
 	end
 end
 
@@ -917,12 +917,12 @@ function update_landuse!(agent::AbstractAgent, model::ABM, landuse::Vector{Strin
 			model.space.max_n_agents[agent.pos_idx] = [2]
 		
 		elseif landuse==["hor"]
-			model.space.max_n_agents[agent.pos_idx] = [5]	# todo: figure out how big this should be
+			model.space.max_n_agents[agent.pos_idx] = [20]
 			model.space.strct_typ[agent.pos_idx] = ["RC"]
 			model.space.no_stories[agent.pos_idx] = [5]		# assuming high-rise for fragility curves (no_stories GE 4)
 
 		elseif landuse==["hosr"]
-			model.space.max_n_agents[agent.pos_idx] = [25]	# todo: figure out how big this should be
+			model.space.max_n_agents[agent.pos_idx] = [45]
 			model.space.strct_typ[agent.pos_idx] = ["RC"]
 			model.space.no_stories[agent.pos_idx] = [5]		# assuming high-rise for fragility curves (no_stories GE 4)
 		end
@@ -941,6 +941,17 @@ function check_bc_update(model, prev_lu, to_landuse, current_code)
 	bc = bc[bc[:,"to"].==to_landuse,:]
 	code_level = bc[:,"to_code_level"][1]
 
+	#= if converting to high occupancy building some code level must be identified
+		For example, this only occurs from unoccupied or a wood building (owned_res, rentl_res, losr)
+		HOR and HOSR are different structure types, not just change of land use
+	=#
+	if (to_landuse == "hor") || (to_landuse == "hosr")
+		BC_rq = true
+		code_level = code_level
+		rho = bc[:,"percent_cost"][1]
+		return BC_rq, code_level, rho
+	end
+
 	to_year = model.BuildingCode2Year[code_level]
 	cu_year = model.BuildingCode2Year[current_code]
 	# println(current_code, " ", code_level, " ", cu_year, " ", to_year)
@@ -955,7 +966,6 @@ function check_bc_update(model, prev_lu, to_landuse, current_code)
 		rho = 0
 		return BC_rq, code_level, rho
 	end
-
 end
 
 

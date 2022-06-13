@@ -33,6 +33,7 @@ Base.@kwdef mutable struct Parameters
 	Household_budget
 	Household_price_goods::Float64
 	Household_number_parcels_aware::Int64
+	Household_number_searching::Int64
 	Household_change_dist::Distribution
 	Household_alphas
 	
@@ -113,6 +114,12 @@ Base.@kwdef mutable struct Parameters
 	n_lowcode::Int64 = 0
 	n_modcode::Int64 = 0
 	n_hghcode::Int64 = 0
+
+	AllowNew_OwnedRes::Bool = true
+	AllowNew_RentalRes::Bool = true
+	AllowNew_LOSR::Bool = true
+	AllowNew_HOR::Bool = true
+	AllowNew_HOSR::Bool = true
 
 end
 

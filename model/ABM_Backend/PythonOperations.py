@@ -264,8 +264,8 @@ class misc_python_ops():
 					"owned_res": 1,
 					"rentl_res": 2,
 					"losr": 2,
-					"hosr": 30,
-					"hor": 5,
+					"hosr": 45,
+					"hor": 20,
 					"commercial": 1 
 					}
 		cnt = 0

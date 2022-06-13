@@ -268,19 +268,18 @@ function complex_model_step!(model)
 	if model.tick < model.t_csz			# pre-CSZ
 		PopulationGrowth!(model)		# updating population counts
 		UpdateModelCounts!(model)		# updating model counts; visitors not yet in parcels for iteration
-		AllAgentsStep!(model)			# generic agent step
 
+		AllAgentsStep!(model)			# generic agent step
 		SimulateVisitorMarketStep!(model)	# simulating the visitor market step
 		UpdateModelCounts!(model)		# updating model counts
 
-		# AllAgentsStep!(model)
 		SimulateMarketStep!(model)		# housing market step
 		UpdateModelCounts!(model)		# updating model counts
 		PopulationOutMigration!(model)	# population out migration to account for overestimates in population
 		UpdateModelCounts!(model)		# updating model counts
 
-	elseif model.tick == model.t_csz 	# CSZ
-		# fds
+	else  	# CSZ occurs
+	# elseif model.tick == model.t_csz 
 		csz!(model)	# running CSZ for Seaside
 		close_model!(model)
 	end
@@ -324,7 +323,7 @@ Note that the population growth curves are for number of people in the model,
 """
 function PopulationGrowth_household!(model::ABM)
 	# keeping a constant number of agents in search space
-	n_agents_add = 400 - model.n_households_searching
+	n_agents_add = model.Household_number_searching - model.n_households_searching
 
 	pos = "none"
 	pos_idx = pos2cell(pos, model)
@@ -761,7 +760,6 @@ function update_visitor_counts!(model)
 	model.Visitors_total = cnt_n_people(model, VisitorAgent)
 	model.Visitors_inparcel = cnt_n_people_parcel(model, VisitorAgent)
 	model.Visitors_searching = cnt_n_people_searching(model, VisitorAgent)
-
 end
 
 
@@ -812,7 +810,10 @@ function update_VacancyCounts!(model)
 	max_n_agents_vs = max_n_agents[VisitorResidence_tf]
 	n_agents_vs = n_agents[VisitorResidence_tf]
 
-	model.Visitors_vacancy = sum(max_n_agents_vs) - sum(n_agents_vs)
+	#= note: with count(UN_tf) here, the total visitor population does not 
+		match projections
+	=#
+	model.Visitors_vacancy = (sum(max_n_agents_vs) - sum(n_agents_vs)) #+ count(UN_tf)
 	model.Visitors_vacancy < 0 && (model.Visitors_vacancy = 0)
 end
 
@@ -911,6 +912,17 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 	hazard_recurrence = convert(Int64, hazard_recurrence)
 	max_n_LOSR = convert(Int64, max_n_LOSR)
 
+	AllowNew_OwnedRes = input[input[:,"Variable"] .== "AllowNew_OwnedRes", "Value"][1]
+	AllowNew_RentalRes = input[input[:,"Variable"] .== "AllowNew_RentalRes", "Value"][1]
+	AllowNew_LOSR = input[input[:,"Variable"] .== "AllowNew_LOSR", "Value"][1]
+	AllowNew_HOR = input[input[:,"Variable"] .== "AllowNew_HOR", "Value"][1]
+	AllowNew_HOSR = input[input[:,"Variable"] .== "AllowNew_HOSR", "Value"][1]
+
+	AllowNew_OwnedRes = convert(Bool, AllowNew_OwnedRes)
+	AllowNew_RentalRes = convert(Bool, AllowNew_RentalRes)
+	AllowNew_LOSR = convert(Bool, AllowNew_LOSR)
+	AllowNew_HOR = convert(Bool, AllowNew_HOR)
+	AllowNew_HOSR = convert(Bool, AllowNew_HOSR)
 
 	# --- population information
 	FullTimeResident_PopulationVector = interpolate_population(PopulationGrowth[:,"Tick"], PopulationGrowth[:,"FullTimeResidents"], t_csz)
@@ -934,6 +946,7 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 	Household_budget_std = input[input[:,"Variable"] .== "Household_budget_std", "Value"][1]
 	Household_price_goods = input[input[:,"Variable"] .== "Household_price_goods", "Value"][1]
 	Household_number_parcels_aware = input[input[:,"Variable"] .== "Household_number_parcels_aware", "Value"][1]	
+	Household_number_searching = input[input[:,"Variable"] .== "Household_number_searching", "Value"][1]	
 	Household_change_rate = input[input[:,"Variable"] .== "Household_change_rate", "Value"][1]
 	Household_change_dist = Exponential(Household_change_rate)
 	Household_alphas = PreferenceMatrix[:, "household"][1:4]
@@ -980,12 +993,12 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 	Firm_alphas_COMM = PreferenceMatrix[:, "comm"][1:4]
 	Firm_alpha_COMM_std = PreferenceMatrix[:, "comm"][5]
 
-
 	Firm_alphas_HOR = setup_alphas(Firm_alphas_HOR, Firm_alpha_HOR_std)
 	Firm_alphas_HOSR = setup_alphas(Firm_alphas_HOSR, Firm_alpha_HOSR_std)
 	Firm_alphas_COMM = setup_alphas(Firm_alphas_COMM, Firm_alpha_COMM_std)
 	Firm_budget = setup_budget(Firm_budget_mean, Firm_budget_std)
 	Firm_number_parcels_aware = convert(Int64, Firm_number_parcels_aware)
+
 
 	# -- Real estate agent information
 	RealEstate_LandBasePrice = input[input[:,"Variable"] .== "RealEstate_LandBasePrice", "Value"][1]
@@ -1020,9 +1033,16 @@ function set_up_model_properties(input_dict, parcel_df, iter)
 		BuildingCode2Year=bc2y,
 		max_n_LOSR=max_n_LOSR,
 		
+		AllowNew_OwnedRes = AllowNew_OwnedRes,
+		AllowNew_RentalRes = AllowNew_RentalRes,
+		AllowNew_LOSR = AllowNew_LOSR,
+		AllowNew_HOR = AllowNew_HOR,
+		AllowNew_HOSR = AllowNew_HOSR,
+
 		Household_budget=Household_budget,
 		Household_price_goods=Household_price_goods,
 		Household_number_parcels_aware=Household_number_parcels_aware,
+		Household_number_searching=Household_number_searching,
 		Household_change_dist=Household_change_dist,
 		Household_alphas=Household_alphas,
 

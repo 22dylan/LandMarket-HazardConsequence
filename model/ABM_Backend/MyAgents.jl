@@ -213,7 +213,6 @@ LandlordAgent:
 	if rental_res: check whether number of occupying agents are less than max occupancy
 	if losr: not on market 
 """
-
 function agent_on_visitor_market_step!(agent::UnoccupiedOwnerAgent, model)
 	agent.prcl_on_visitor_mrkt = false
 end
@@ -344,6 +343,10 @@ function agent_WTP_step!(agent::HouseholdAgent, model::ABM, sellers)
 	 	+ If it remains as owned_res, it can again change hands to another owned_res.
 	=#
 
+	if model.AllowNew_OwnedRes == false
+		return 0, 0.0, "none"
+	end
+
 
 	# Getting parcels in zones that an agent can purchase
 	zone_for_buyer_tf = Vector{Bool}(undef, length(prcl_zones))
@@ -399,14 +402,18 @@ function agent_WTP_step!(agent::LandlordAgent, model::ABM, sellers)
 
 
 
-	if (WTP_losr > WTP_rr) && (model.n_LOSR<model.max_n_LOSR)
+	if (WTP_losr > WTP_rr) && (model.n_LOSR<model.max_n_LOSR) && (model.AllowNew_LOSR==true)
 		WTP_max = WTP_losr
 		seller_bid_to = seller_bid_to_losr
 		LU_bid = "losr"
-	else
+	elseif model.AllowNew_RentalRes==true
 		WTP_max = WTP_rr
 		seller_bid_to = seller_bid_to_rr
 		LU_bid = "rentl_res"
+	else
+		seller_bid_to = 0
+		WTP_max = 0.0
+		LU_bid = "none"
 	end
 
 	return seller_bid_to, WTP_max, LU_bid
@@ -445,14 +452,20 @@ function agent_WTP_step!(agent::FirmAgent, model, sellers)
 	seller_bid_to_hor, WTP_hor = agent_bid_calc(agent, model, sellers_hor, sellers_idx_hor, "hor")
 	seller_bid_to_hosr, WTP_hosr = agent_bid_calc(agent, model, sellers_hosr, sellers_idx_hosr, "hosr")
 
-	if WTP_hor > WTP_hosr
+
+
+	if (WTP_hor > WTP_hosr) && (model.AllowNew_HOR==true)
 		WTP_max = WTP_hor
 		seller_bid_to = seller_bid_to_hor
 		LU_bid = "hor"
-	else
+	elseif model.AllowNew_HOSR==true
 		WTP_max = WTP_hosr
 		seller_bid_to = seller_bid_to_hosr
 		LU_bid = "hosr"
+	else
+		seller_bid_to = 0
+		WTP_max = 0.0
+		LU_bid = "none"
 	end
 	return seller_bid_to, WTP_max, LU_bid
 end
