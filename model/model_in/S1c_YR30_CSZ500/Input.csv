@@ -1,0 +1,37 @@
+Variable,Value,notes
+n_years,30,number of years
+n_sims,50,number of simulations
+hazard_recurrence,500,hazard recurrence interval
+seed,1337,seed for simulations
+distance_decay_exponent,0.0008,Used to parameterize distance decay function
+max_n_LOSR,100000,cap on number of low occupancy seasonal rentals
+age_alpha,15,Alpha term for parameterizing gamma distribution for sample of agent age
+age_theta,2.667,Theta term for parameterizing gamma distribution for sample of agent age
+nhousehold_alpha,5,Alpha term for parameterizing gamma distribution for sample of number of people in household
+nhousehold_theta,0.44,Theta term for parameterizing gamma distribution for sample of number of people in household
+nvisitor_alpha,10,Alpha term for parameterizing gamma distribution for sample of number of people in visitor group
+nvisitor_theta,0.4,Theta term for parameterizing gamma distribution for sample of number of people in visitor group
+Household_budget_mean,800,Household agent budget mean; used to parameterize normal distribution
+Household_budget_std,200,Household agent budget standard deviation; used to parameterize normal distribution
+Household_price_goods,70,"Cumulative price of other goods that agent considers when making bid (food, education, entertainment, etc.). Parameterizes WTP"
+Household_number_parcels_aware,10,number of parcels agent is aware of when searching market
+Household_number_searching,400,Constant number of households in model space searching for parcel
+Household_change_rate,5,Average number of years that parcel household has same number of people
+Landlord_budget_mean,800,Landlord agent budget mean; used to parameterize normal distribution
+Landlord_budget_std,200,Landlord agent budget standard deviation; used to parameterize normal distribution
+Landlord_price_goods,70,"Cumulative price of other goods that agent considers when making bid (food, education, entertainment, etc.). Parameterizes WTP"
+Landlord_number_parcels_aware,20,number of parcels agent is aware of when searching market
+Landlord_number_searching,200,Constant number of landlords in model space searching for parcel
+Landlord_transition_penalty,0.35,Penalty for landlord transitioning from one state to another
+Firm_budget_mean,2000,Firm agent budget mean; used to parameterize normal distribution
+Firm_budget_std,50,Firm agent budget standard deviation; used to parameterize normal distribution
+Firm_price_goods,70,"Cumulative price of other goods that agent considers when making bid (food, education, entertainment, etc.). Parameterizes WTP"
+Firm_number_parcels_aware,20,number of parcels agent is aware of when searching market
+Firm_number_searching,0,Constant number of firms in model space searching for parcel
+Visitor_number_parcels_aware,10,number of parcels agent is aware of when searching market
+RealEstate_LandBasePrice,150,Real estate agent base price for land
+AllowNew_OwnedRes,1,Boolean for allowing new owned residential development
+AllowNew_RentalRes,1,Boolean for allowing new rental residential development
+AllowNew_LOSR,1,Boolean for allowing new LOSR development
+AllowNew_HOR,1,Boolean for allowing new HOR development
+AllowNew_HOSR,1,Boolean for allowing new HOSR development

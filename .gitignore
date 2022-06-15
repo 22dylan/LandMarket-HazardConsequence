@@ -8,8 +8,7 @@
 /model/model_out
 /model/temp
 
-!/model/model_in
-/model/model_in/*
-!/model/model_in/S0_StatusQuo_CSZ40_MC100/
-!/model/model_in/S0_testbed/
-!/model/model_in/S0_YR30_CSZ500/
+# !/model/model_in
+# /model/model_in/*
+# !/model/model_in/S0_testbed/
+# !/model/model_in/S0_YR30_CSZ500/

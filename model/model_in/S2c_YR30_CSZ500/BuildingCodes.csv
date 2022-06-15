@@ -1,0 +1,25 @@
+from,to,percent_cost,to_code_level,required
+unoccupied,owned_res,1,High - Code,TRUE
+unoccupied,rentl_res,1,High - Code,TRUE
+unoccupied,losr,1,High - Code,TRUE
+unoccupied,hor,1,High - Code,TRUE
+unoccupied,hosr,1,High - Code,TRUE
+unoccupied,commercial,1,High - Code,TRUE
+owned_res,owned_res,1,High - Code,TRUE
+owned_res,rentl_res,1,High - Code,TRUE
+owned_res,losr,1,High - Code,TRUE
+owned_res,hor,1,High - Code,TRUE
+owned_res,hosr,1,High - Code,TRUE
+owned_res,commercial,1,High - Code,TRUE
+rentl_res,owned_res,1,High - Code,TRUE
+rentl_res,rentl_res,1,High - Code,TRUE
+rentl_res,losr,1,High - Code,TRUE
+rentl_res,hor,1,High - Code,TRUE
+rentl_res,hosr,1,High - Code,TRUE
+rentl_res,commercial,1,High - Code,TRUE
+losr,owned_res,1,High - Code,TRUE
+losr,rentl_res,1,High - Code,TRUE
+losr,losr,1,High - Code,TRUE
+losr,hor,1,High - Code,TRUE
+losr,hosr,1,High - Code,TRUE
+losr,commercial,1,High - Code,TRUE
