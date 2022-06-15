@@ -1,0 +1,1259 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Details &#8212; Integrated Land Market and Hazard Consequence Model</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Running the Model" href="RunningModel.html" />
+    <link rel="prev" title="Design Concepts" href="DesignConcepts.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/TemporalSetting6.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Integrated Land Market and Hazard Consequence Model</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Integrated Land Market and Hazard Consequence Model
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  ODD Protocol
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Overview.html">
+   Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="DesignConcepts.html">
+   Design Concepts
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Details
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Running the Model
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="RunningModel.html">
+   Running the Model
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  References
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ref/ref.html">
+   References
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/Details.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#initialization">
+   Initialization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#input">
+   Input
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shapefiles">
+     Shapefiles
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#beach-shp">
+       Beach.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#buildings-shp">
+       Buildings.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cbd-shp">
+       CBD.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#communityassets-shp">
+       CommunityAssets.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#greenspace-shp">
+       Greenspace.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#zoning-shp">
+       Zoning.shp
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#csv-files">
+     CSV Files
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#input-csv">
+       Input.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#zoning-params-csv">
+       Zoning_params.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#buildingcodes-csv">
+       BuildingCodes.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#populationgrowth-csv">
+       PopulationGrowth.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#preferencematrix-csv">
+       PreferenceMatrix.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#taxlot2bldg-csv">
+       TaxLot2Bldg.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#commercialbuildingmapping-csv">
+       CommercialBuildingMapping.csv
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#submodels">
+   Submodels
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-start">
+     (a) Start
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#b-natural-hazard-mitigation-policies">
+     (b) Natural Hazard Mitigation Policies
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#c-population-allocation">
+     (c) Population Allocation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#d-population-growth-model">
+     (d) Population Growth Model
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#e-land-market-simulation">
+     (e) Land Market Simulation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#f-community-description-at-time-t">
+     (f) Community Description at Time t
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#g-hazard-models">
+     (g) Hazard Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#h-damage-models">
+     (h) Damage Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#i-damage-to-physical-infrastructure">
+     (i)	Damage to Physical Infrastructure
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Details</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#initialization">
+   Initialization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#input">
+   Input
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shapefiles">
+     Shapefiles
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#beach-shp">
+       Beach.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#buildings-shp">
+       Buildings.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cbd-shp">
+       CBD.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#communityassets-shp">
+       CommunityAssets.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#greenspace-shp">
+       Greenspace.shp
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#zoning-shp">
+       Zoning.shp
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#csv-files">
+     CSV Files
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#input-csv">
+       Input.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#zoning-params-csv">
+       Zoning_params.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#buildingcodes-csv">
+       BuildingCodes.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#populationgrowth-csv">
+       PopulationGrowth.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#preferencematrix-csv">
+       PreferenceMatrix.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#taxlot2bldg-csv">
+       TaxLot2Bldg.csv
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#commercialbuildingmapping-csv">
+       CommercialBuildingMapping.csv
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#submodels">
+   Submodels
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-start">
+     (a) Start
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#b-natural-hazard-mitigation-policies">
+     (b) Natural Hazard Mitigation Policies
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#c-population-allocation">
+     (c) Population Allocation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#d-population-growth-model">
+     (d) Population Growth Model
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#e-land-market-simulation">
+     (e) Land Market Simulation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#f-community-description-at-time-t">
+     (f) Community Description at Time t
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#g-hazard-models">
+     (g) Hazard Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#h-damage-models">
+     (h) Damage Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#i-damage-to-physical-infrastructure">
+     (i)	Damage to Physical Infrastructure
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <div class="section" id="details">
+<h1>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h2>
+<p>The model is initialized with spatial representations of: (1) parcels in a community, (2) pertinent features such as the coastline, central business district, community assets, and greenspaces, and (3) a zoning layer. With this information, an initial parcel data frame is constructed that represents the parcels and contains spatial information such as the distance to pertinent features and the zone that the parcel is in. A population and housing unit allocation (c in the flowchart representing model processes) stochastically assigns individuals to each parcel using US Census data (Rosenheim et al., 2019). All of the features in this initial data frame are provided in the table below.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:left head"><p>Variable</p></th>
+<th class="text-align:left head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:left"><p>guid</p></td>
+<td class="text-align:left"><p>Globally unique identifier for the parcel; if an agent is in a parcel, this is the same as the agent’s “pos”</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>struct_typ</p></td>
+<td class="text-align:left"><p>Structure type; Hazus fragility curves are used for the damage and loss analysis and therefore the structure types are from Hazus; for this work, these include W1 (light-frame wood), W2 (mid-rise wood), C1L (low-rise concrete) and C1M (mid-rise concrete).</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>year_built</p></td>
+<td class="text-align:left"><p>Year of construction or year built</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>no_stories</p></td>
+<td class="text-align:left"><p>Number of stories</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>dgn_lvl</p></td>
+<td class="text-align:left"><p>Design level representing the seismic code the building; units of meters</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>d_commasst</p></td>
+<td class="text-align:left"><p>Distance to community asset; units of meters</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>d_coast</p></td>
+<td class="text-align:left"><p>Distance to coast; units of meters</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>d_cbd</p></td>
+<td class="text-align:left"><p>Distance to central business district; units of meters</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>zone</p></td>
+<td class="text-align:left"><p>Unique identifier for the zone that the parcel is in</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>zone_type</p></td>
+<td class="text-align:left"><p>Type of zone that the parcel is in; options considered here include: open space (OS), residential (R), residential-high density (R_HD), seasonal rental (SR), and commercial (C); additional zones can be considered by modifying the input zoning layer and zoning_params file</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>numprec</p></td>
+<td class="text-align:left"><p>Number of people in the parcel from the housing unit allocation</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>landuse</p></td>
+<td class="text-align:left"><p>Initial land use of the parcel inferred from the housing unit allocation</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>owner_type</p></td>
+<td class="text-align:left"><p>Type of agent that owns the parcel</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>max_n_agents</p></td>
+<td class="text-align:left"><p>Maximum number of agents that can occupy the parcel</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>x</p></td>
+<td class="text-align:left"><p>x-location of the parcel; EPSG:26910 – NAD83/UTM zone 10N is used here</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>y</p></td>
+<td class="text-align:left"><p>y-location of the parcel; EPSG:26910 – NAD83/UTM zone 10N is used here</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<div class="section" id="input">
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<p>Input to the model consists of both shapefiles and CSZ files.</p>
+<div class="section" id="shapefiles">
+<h3>Shapefiles<a class="headerlink" href="#shapefiles" title="Permalink to this headline">¶</a></h3>
+<p>The table below describes the shapefiles.</p>
+<div class="section" id="beach-shp">
+<h4>Beach.shp<a class="headerlink" href="#beach-shp" title="Permalink to this headline">¶</a></h4>
+<p>This is a line layer representing the coast for the model run.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ID</p></td>
+<td><p>ID for beach line</p></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="_images/beach.png"><img alt="_images/beach.png" class="align-center" src="_images/beach.png" style="width: 400px;" /></a>
+</div>
+<div class="section" id="buildings-shp">
+<h4>Buildings.shp<a class="headerlink" href="#buildings-shp" title="Permalink to this headline">¶</a></h4>
+<p>This is a point layer representing the buildnigs/parcels for the model run.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Guid</p></td>
+<td><p>Globally unique identifier for the parcel; if an agent is in a parcel, this is the same as the agent’s “pos”</p></td>
+</tr>
+<tr class="row-odd"><td><p>Struct_typ</p></td>
+<td><p>Structure type; Hazus fragility curves are used for the damage and loss analysis and therefore the structure types are from Hazus; for this work, these include W1 (light-frame wood), W2 (mid-rise wood), C1L (low-rise concrete) and C1M (mid-rise concrete).</p></td>
+</tr>
+<tr class="row-even"><td><p>Year_built</p></td>
+<td><p>Year of construction or year built</p></td>
+</tr>
+<tr class="row-odd"><td><p>No_stories</p></td>
+<td><p>Number of stories</p></td>
+</tr>
+<tr class="row-even"><td><p>Dgn_lvl</p></td>
+<td><p>Design level representing the seismic code the building; units of meters</p></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="_images/Buildings.png"><img alt="_images/Buildings.png" class="align-center" src="_images/Buildings.png" style="width: 400px;" /></a>
+</div>
+<div class="section" id="cbd-shp">
+<h4>CBD.shp<a class="headerlink" href="#cbd-shp" title="Permalink to this headline">¶</a></h4>
+<p>This is a polygon layer representing the central business district (CBD).</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ID</p></td>
+<td><p>ID for central business district</p></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="_images/CBD.png"><img alt="_images/CBD.png" class="align-center" src="_images/CBD.png" style="width: 400px;" /></a>
+</div>
+<div class="section" id="communityassets-shp">
+<h4>CommunityAssets.shp<a class="headerlink" href="#communityassets-shp" title="Permalink to this headline">¶</a></h4>
+<p>This is a point file representing community assets in the model.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ID</p></td>
+<td><p>ID for community assets</p></td>
+</tr>
+<tr class="row-odd"><td><p>Type</p></td>
+<td><p>Type of community asset (e.g., school, library, hospital)</p></td>
+</tr>
+<tr class="row-even"><td><p>Name</p></td>
+<td><p>Name of community asset (e.g., SeasidePostOffice, SeasideFireDepartment)</p></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="_images/CommunityAssets.png"><img alt="_images/CommunityAssets.png" class="align-center" src="_images/CommunityAssets.png" style="width: 400px;" /></a>
+</div>
+<div class="section" id="greenspace-shp">
+<h4>Greenspace.shp<a class="headerlink" href="#greenspace-shp" title="Permalink to this headline">¶</a></h4>
+<p>This is a polygon layer representing greenspace in the model</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ID</p></td>
+<td><p>ID for greenspace</p></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="_images/Greenspace.png"><img alt="_images/Greenspace.png" class="align-center" src="_images/Greenspace.png" style="width: 400px;" /></a>
+</div>
+<div class="section" id="zoning-shp">
+<h4>Zoning.shp<a class="headerlink" href="#zoning-shp" title="Permalink to this headline">¶</a></h4>
+<p>This is a polygon layer representing zoning in the model. It needs to align with the zoning.csv file below.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>guid</p></td>
+<td><p>Globally unique identifier for zone</p></td>
+</tr>
+<tr class="row-odd"><td><p>zone_abbr</p></td>
+<td><p>Zone abbreviation; must also be in the zoning_param.csv input file</p></td>
+</tr>
+<tr class="row-even"><td><p>ZONING</p></td>
+<td><p>Description of zone</p></td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="_images/Zoning.png"><img alt="_images/Zoning.png" class="align-center" src="_images/Zoning.png" style="width: 400px;" /></a>
+<!-- <img src="image/Zoning.png" width="45%"/> -->
+</div>
+</div>
+<div class="section" id="csv-files">
+<h3>CSV Files<a class="headerlink" href="#csv-files" title="Permalink to this headline">¶</a></h3>
+<p>The following CSV files are also read as input to the model.</p>
+<div class="section" id="input-csv">
+<h4>Input.csv<a class="headerlink" href="#input-csv" title="Permalink to this headline">¶</a></h4>
+<p>Provides general input to the model</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:left head"><p>Variable</p></th>
+<th class="text-align:left head"><p>Default Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:left"><p>n_years</p></td>
+<td class="text-align:left"><p>30</p></td>
+<td><p>number of years to simulate per iteration; time of hazard occurring</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>n_sims</p></td>
+<td class="text-align:left"><p>50</p></td>
+<td><p>number of simulations/iterations</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>hazard_recurrence</p></td>
+<td class="text-align:left"><p>500</p></td>
+<td><p>hazard recurrence interval (100, 250, 500, 1000, 2500, 5000, 10000)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>seed</p></td>
+<td class="text-align:left"><p>1337</p></td>
+<td><p>seed for simulations</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>distance_decay_exponent</p></td>
+<td class="text-align:left"><p>0.0008</p></td>
+<td><p>Used to parameterize distance decay function</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>max_n_LOSR</p></td>
+<td class="text-align:left"><p>100000</p></td>
+<td><p>cap on number of low occupancy seasonal rentals</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>age_alpha</p></td>
+<td class="text-align:left"><p>15</p></td>
+<td><p>Alpha term for parameterizing gamma distribution for sample of agent age</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>age_theta</p></td>
+<td class="text-align:left"><p>2.667</p></td>
+<td><p>Theta term for parameterizing gamma distribution for sample of agent age</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>nhousehold_alpha</p></td>
+<td class="text-align:left"><p>5</p></td>
+<td><p>Alpha term for parameterizing gamma distribution for sample of number of people in household</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>nhousehold_theta</p></td>
+<td class="text-align:left"><p>0.44</p></td>
+<td><p>Theta term for parameterizing gamma distribution for sample of number of people in household</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>nvisitor_alpha</p></td>
+<td class="text-align:left"><p>10</p></td>
+<td><p>Alpha term for parameterizing gamma distribution for sample of number of people in visitor group</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>nvisitor_theta</p></td>
+<td class="text-align:left"><p>0.4</p></td>
+<td><p>Theta term for parameterizing gamma distribution for sample of number of people in visitor group</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Household_budget_mean</p></td>
+<td class="text-align:left"><p>800</p></td>
+<td><p>Household agent budget mean; used to parameterize normal distribution</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Household_budget_std</p></td>
+<td class="text-align:left"><p>200</p></td>
+<td><p>Household agent budget standard deviation; used to parameterize normal distribution</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Household_price_goods</p></td>
+<td class="text-align:left"><p>70</p></td>
+<td><p>Cumulative price of other goods that agent considers when making bid (food, education, entertainment, etc.). Parameterizes WTP</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Household_number_parcels_aware</p></td>
+<td class="text-align:left"><p>10</p></td>
+<td><p>number of parcels agent is aware of when searching market</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Household_number_searching</p></td>
+<td class="text-align:left"><p>400</p></td>
+<td><p>Constant number of households in model space searching for parcel</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Household_change_rate</p></td>
+<td class="text-align:left"><p>5</p></td>
+<td><p>Average number of years that parcel household has same number of people</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Landlord_budget_mean</p></td>
+<td class="text-align:left"><p>800</p></td>
+<td><p>Landlord agent budget mean; used to parameterize normal distribution</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Landlord_budget_std</p></td>
+<td class="text-align:left"><p>200</p></td>
+<td><p>Landlord agent budget standard deviation; used to parameterize normal distribution</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Landlord_price_goods</p></td>
+<td class="text-align:left"><p>70</p></td>
+<td><p>Cumulative price of other goods that agent considers when making bid (food, education, entertainment, etc.). Parameterizes WTP</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Landlord_number_parcels_aware</p></td>
+<td class="text-align:left"><p>20</p></td>
+<td><p>number of parcels agent is aware of when searching market</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Landlord_number_searching</p></td>
+<td class="text-align:left"><p>200</p></td>
+<td><p>Constant number of landlords in model space searching for parcel</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Landlord_transition_penalty</p></td>
+<td class="text-align:left"><p>0.35</p></td>
+<td><p>Penalty for landlord transitioning from one state to another</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Firm_budget_mean</p></td>
+<td class="text-align:left"><p>2000</p></td>
+<td><p>Firm agent budget mean; used to parameterize normal distribution</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Firm_budget_std</p></td>
+<td class="text-align:left"><p>50</p></td>
+<td><p>Firm agent budget standard deviation; used to parameterize normal distribution</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Firm_price_goods</p></td>
+<td class="text-align:left"><p>70</p></td>
+<td><p>Cumulative price of other goods that agent considers when making bid (food, education, entertainment, etc.). Parameterizes WTP</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Firm_number_parcels_aware</p></td>
+<td class="text-align:left"><p>20</p></td>
+<td><p>number of parcels agent is aware of when searching market</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>Firm_number_searching</p></td>
+<td class="text-align:left"><p>3</p></td>
+<td><p>Constant number of firms in model space searching for parcel</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>Visitor_number_parcels_aware</p></td>
+<td class="text-align:left"><p>10</p></td>
+<td><p>number of parcels agent is aware of when searching market</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>RealEstate_LandBasePrice</p></td>
+<td class="text-align:left"><p>150</p></td>
+<td><p>Real estate agent base price for land</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>AllowNew_OwnedRes</p></td>
+<td class="text-align:left"><p>1</p></td>
+<td><p>Boolean for allowing new owned residential development</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>AllowNew_RentalRes</p></td>
+<td class="text-align:left"><p>1</p></td>
+<td><p>Boolean for allowing new rental residential development</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>AllowNew_LOSR</p></td>
+<td class="text-align:left"><p>1</p></td>
+<td><p>Boolean for allowing new LOSR development</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>AllowNew_HOR</p></td>
+<td class="text-align:left"><p>1</p></td>
+<td><p>Boolean for allowing new HOR development</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>AllowNew_HOSR</p></td>
+<td class="text-align:left"><p>1</p></td>
+<td><p>Boolean for allowing new HOSR development</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="zoning-params-csv">
+<h4>Zoning_params.csv<a class="headerlink" href="#zoning-params-csv" title="Permalink to this headline">¶</a></h4>
+<p>Maps the zoning abbreviations to the different land uses. The zoning abbreviations must match those in the Zoning.shp file. Each row corresponds to a zone, and each column to a land use. Default values are provided below. Boolean values are represented as 1 (True) and 0 (False).</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Zone</p></th>
+<th class="head"><p>unoccupied</p></th>
+<th class="head"><p>owned_res</p></th>
+<th class="head"><p>rentl_res</p></th>
+<th class="head"><p>ho_res</p></th>
+<th class="head"><p>losr</p></th>
+<th class="head"><p>hosr</p></th>
+<th class="head"><p>comm</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>OS</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>R</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>R_HD</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>SR</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="buildingcodes-csv">
+<h4>BuildingCodes.csv<a class="headerlink" href="#buildingcodes-csv" title="Permalink to this headline">¶</a></h4>
+<p>Input file describing mandatory building codes when a new change of hands occurs.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>from</p></td>
+<td><p>Initial land use before change of hands</p></td>
+</tr>
+<tr class="row-odd"><td><p>to</p></td>
+<td><p>New land use that the new owner is considering updating the parcel to</p></td>
+</tr>
+<tr class="row-even"><td><p>percent_cost</p></td>
+<td><p>Percent of base price that the building code costs. This is used in the owner WTP calculations.</p></td>
+</tr>
+<tr class="row-odd"><td><p>to_code_level</p></td>
+<td><p>The code level that the building must go to.</p></td>
+</tr>
+<tr class="row-even"><td><p>Required</p></td>
+<td><p>Boolean indicating whether the change is required. Boolean values represented as True/False</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="populationgrowth-csv">
+<h4>PopulationGrowth.csv<a class="headerlink" href="#populationgrowth-csv" title="Permalink to this headline">¶</a></h4>
+<p>Input file describing deterministic population projections. These are provided for both full time residents and visitors</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Tick</p></td>
+<td><p>Time step in model. Starts at 0; must be in 5-year increments</p></td>
+</tr>
+<tr class="row-odd"><td><p>FullTimeResidents</p></td>
+<td><p>Number of full time at the time step</p></td>
+</tr>
+<tr class="row-even"><td><p>Visitors</p></td>
+<td><p>Number of visitors at the time step</p></td>
+</tr>
+<tr class="row-odd"><td><p>Year</p></td>
+<td><p>Year in actual model; this column is not used in the model, but rather provided for the user</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="preferencematrix-csv">
+<h4>PreferenceMatrix.csv<a class="headerlink" href="#preferencematrix-csv" title="Permalink to this headline">¶</a></h4>
+<p>Matrix describing preferences. If a standard deviation is provided, the preferences are sampled from a normal distribution parameterized on a mean and standard deviation. An example preference matrix is provided below. In this case, a household agent’s preference for parcels near the coast will be sampled from a normal distribution with N(0.3, 0.2).</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>household</p></th>
+<th class="head"><p>visitor</p></th>
+<th class="head"><p>Landlord - rentl_res</p></th>
+<th class="head"><p>Landlord - losr</p></th>
+<th class="head"><p>Firm - hor</p></th>
+<th class="head"><p>Firm - hosr</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>α_coast</p></td>
+<td><p>0.3</p></td>
+<td><p>0.7</p></td>
+<td><p>0.2</p></td>
+<td><p>0.4</p></td>
+<td><p>0.15</p></td>
+<td><p>0.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>α_commast</p></td>
+<td><p>0.7</p></td>
+<td><p>-</p></td>
+<td><p>0.4</p></td>
+<td><p>-</p></td>
+<td><p>0.15</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p>α_cbd</p></td>
+<td><p>-</p></td>
+<td><p>0.3</p></td>
+<td><p>-</p></td>
+<td><p>0.2</p></td>
+<td><p>-</p></td>
+<td><p>0.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>α_mrkt</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>0.4</p></td>
+<td><p>0.4</p></td>
+<td><p>0.7</p></td>
+<td><p>0.7</p></td>
+</tr>
+<tr class="row-even"><td><p>σ</p></td>
+<td><p>0.2</p></td>
+<td><p>0.2</p></td>
+<td><p>0.1</p></td>
+<td><p>0.1</p></td>
+<td><p>0.1</p></td>
+<td><p>0.1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="taxlot2bldg-csv">
+<h4>TaxLot2Bldg.csv<a class="headerlink" href="#taxlot2bldg-csv" title="Permalink to this headline">¶</a></h4>
+<p>Optional input file that maps tax-lots to a single building. This is provided because some tax-lots in Seaside are contained within a single building (a condo containing multiple tax-lots). In the model, one building is represented as a parcel rather than the many tax-lots located therein.  If not using, leave this file blank with the columns provided.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>guid</p></td>
+<td><p>Globally unique identifier for the parcel</p></td>
+</tr>
+<tr class="row-odd"><td><p>rep_guid</p></td>
+<td><p>Representative GUID that all parcels in the GUID column will be mapped.</p></td>
+</tr>
+<tr class="row-even"><td><p>max_n_agents</p></td>
+<td><p>Maximum number of agents in the building; that is, the number of tax-lots that are represented.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commercialbuildingmapping-csv">
+<h4>CommercialBuildingMapping.csv<a class="headerlink" href="#commercialbuildingmapping-csv" title="Permalink to this headline">¶</a></h4>
+<p>Optional file describing which parcels are commercial buildings in the community. These are assumed static and do not change with this version of the model. If unknown, leave this file blank with the column provided.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>guid</p></td>
+<td><p>Globally unique identifier of the parcels that are commercial buildings</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="submodels">
+<h2>Submodels<a class="headerlink" href="#submodels" title="Permalink to this headline">¶</a></h2>
+<p>The figure below shows a flowchart representation of the modeling framework. The urban change model is shown with the grey dash-dot box on the left, whereas the hazard consequence model, IN-CORE, is shown with the blue dash-dot box on the right. This section describes each submodel of the flow chart in more detail.</p>
+<a class="reference internal image-reference" href="_images/Flowchart4.png"><img alt="_images/Flowchart4.png" class="align-center" src="_images/Flowchart4.png" style="width: 600px;" /></a>
+<div class="section" id="a-start">
+<h3>(a) Start<a class="headerlink" href="#a-start" title="Permalink to this headline">¶</a></h3>
+<p>The model starts here
+Relevant functions:</p>
+<ul class="simple">
+<li><p>main()</p></li>
+</ul>
+</div>
+<div class="section" id="b-natural-hazard-mitigation-policies">
+<h3>(b) Natural Hazard Mitigation Policies<a class="headerlink" href="#b-natural-hazard-mitigation-policies" title="Permalink to this headline">¶</a></h3>
+<p>This is a set of policies that are imposed on the modeling environment and constrains the overall model. By simply modifying the input outlined above, policies to consider could include caps on the number of low occupancy seasonal rental parcels, enforced building codes, relocating community assets, creating new green spaces, rezoning, and limiting new development of particular land uses. The user could also modify the source code to include additional policies outside of those that are controlled by input files.</p>
+</div>
+<div class="section" id="c-population-allocation">
+<h3>(c) Population Allocation<a class="headerlink" href="#c-population-allocation" title="Permalink to this headline">¶</a></h3>
+<p>This submodel represents the <a class="reference external" href="https://incore.ncsa.illinois.edu/doc/pyincore/modules.html#analyses-housingunitallocation">housing unit allocation algorithm in IN-CORE</a> (Rosenheim et al., 2019). This submodel takes publicly available US Census data and stochastically downscales it to the parcel-level. This results in the number of people in each parcel. From the housing unit allocation, the initial land uses are inferred.</p>
+<p>Relevant functions:</p>
+<ul class="simple">
+<li><p>housing_unit_allocation()</p></li>
+<li><p>assign_property_types()</p></li>
+</ul>
+</div>
+<div class="section" id="d-population-growth-model">
+<h3>(d) Population Growth Model<a class="headerlink" href="#d-population-growth-model" title="Permalink to this headline">¶</a></h3>
+<p>The population growth submodel adds more agents to the model based on the values provided in the input file. Note that this submodel adds agents to the general model space. That is, they are not assigned to a parcel yet, but are in the market looking to purchase a parcel. In this submodel, the household, visitor, landlord, and firm agents are increased. In addition, this submodel represents population outmigration. Population outmigration occurs if the number of people in parcels exceed the values provided in the input file PopulationGrowth.csv.</p>
+<a class="reference internal image-reference" href="_images/PopulationGrowth.png"><img alt="_images/PopulationGrowth.png" class="align-center" src="_images/PopulationGrowth.png" style="width: 400px;" /></a>
+<p>Relevant functions:</p>
+<ul class="simple">
+<li><p>PopulationGrowth!()</p></li>
+<li><p>PopulationOutMigration!()</p></li>
+</ul>
+</div>
+<div class="section" id="e-land-market-simulation">
+<h3>(e) Land Market Simulation<a class="headerlink" href="#e-land-market-simulation" title="Permalink to this headline">¶</a></h3>
+<p>Household, landlord, and firm agents are competing in a landmarket attempting to purchase parcels that meet their preferences. The landmarket is an extension of the ALMA and ALMA-C models (Filatova et al., 2009; Filatova et al., 2011). The model presented herein considers six agents whereas ALMA only considers two agents: buyer and seller. As in ALMA, agents competing in the land market compute their willingness to pay (WTP) for a parcel. Here, the WTP is modified to account for structural retrofits as:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{gather*}
+WTP = \frac{Y \cdot U^2}{b^2 \cdot U^2}(1+ϵ) - ρ \cdot m
+\end{gather*}\]</div>
+<p>Where <em>Y</em> is the agent budget sampled from a normal distribution, <em>U</em> is the utility of the parcel, <em>b</em> represents costs of other goods, and where <em>ϵ</em> is computed as ϵ=(NB-NS)/(NB+NS), with <em>NB</em> number of buyers and <em>NS</em> number of sellers. The final two terms of the equation above were not in the ALMA model formulation and were added to account for costs associated with structural retrofits. Here, <em>ρ</em> is a constant between 0 and 1 parameterized on the transition between retrofit levels, e.g., low- to moderate-seismic code vs. low- to high-seismic code (see BuildingCodes.csv), and <em>m</em> is the market value of the parcel provided by the real estate agent. This term is subtracted to account for the additional costs an agent would incur if retrofits were mandatory.
+The utility, <em>U</em>, is computed using a Cobb-Douglas utility function as:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{gather*}
+	U = \prod_{i=1}^{n}(P_i^{\alpha_i})
+\end{gather*}\]</div>
+<p>Where <em>P<sub>i</sub></em> is a normalized value (0-100) representing either proximity to a particular feature or market pressure, <em>α<sub>i</sub></em> weights the importance of this feature to the agent representing preferences, and <em>n</em> are the number of features considered. The preference weights, α, for each agent are sampled from a normal distribution and rescaled such that they sum to 1. Proximity is computed using a scaled distance decay function and market pressure is based on the number of buyers and sellers</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{gather*}
+P_{dist} = 100 \cdot e^{-dk} \\
+P_{mrkt} = 100 \cdot (0.5\cdot\epsilon + 0.5)
+\end{gather*}\]</div>
+<p>Where <em>d</em> is distance to the feature and <em>k</em> is a tunable parameter.</p>
+<p>Relevant functions:</p>
+<ul class="simple">
+<li><p>SimulateVisitorMarketStep!()</p></li>
+<li><p>SimulateMarketStep!()</p></li>
+</ul>
+</div>
+<div class="section" id="f-community-description-at-time-t">
+<h3>(f) Community Description at Time t<a class="headerlink" href="#f-community-description-at-time-t" title="Permalink to this headline">¶</a></h3>
+<p>The community description at time t includes the structural properties, seismic codes, land uses, parcel owners, and number of people in each parcel.</p>
+<p>Relevant functions:</p>
+<ul class="simple">
+<li><p>UpdateModelCounts!()</p></li>
+</ul>
+</div>
+<div class="section" id="g-hazard-models">
+<h3>(g) Hazard Models<a class="headerlink" href="#g-hazard-models" title="Permalink to this headline">¶</a></h3>
+<p>Hazard models are spatially explicit representations of natural hazards. For the Seaside testbed tehse were previously developed as a part of a probabilistic seismic and tsunami hazard analysis (Park et al., 2017; Cox et al., 2022). The PSTHA resulted in hazard maps for seven recurrence intervals (100, 250, 500, 1000, 2500, 5000, and 10000-year). The user can select which hazard recurrence interval to consider as input to the model in Input.csv. The hazard maps are available in the IN-CORE data service which is called at runtime. No hazard layers need to be provided locally.</p>
+</div>
+<div class="section" id="h-damage-models">
+<h3>(h) Damage Models<a class="headerlink" href="#h-damage-models" title="Permalink to this headline">¶</a></h3>
+<p>Damage models are fragility functions that describe the probability of exceeding a damage state given a hazard intensity measure. Here Hazus seismic and tsunami fragility curves are employed. The fragility curves are represented as lognormal distribution functions parameterized on a median and dispersion. The fragility curves are mapped to each buildng type and seismic-code level. The fragility curves are available on the IN-CORE data service which is called at runtime and thus not needed locally. The figure below shows an example of seismic fragility curves for a light-frame wood structure for different seismic-code levels.</p>
+<a class="reference internal image-reference" href="_images/Fragility.png"><img alt="frag" class="align-center" src="_images/Fragility.png" style="width: 400px;" /></a>
+</div>
+<div class="section" id="i-damage-to-physical-infrastructure">
+<h3>(i)	Damage to Physical Infrastructure<a class="headerlink" href="#i-damage-to-physical-infrastructure" title="Permalink to this headline">¶</a></h3>
+<p>Damage to physical infrastructure is modeled using IN-CORE. IN-CORE maps the spatially explicit hazard intensity measures of (g) to the community description of (f) using the damage models of (h). The hazard occurs in the model at the time step specified by the user in Input.csv. When this step occurs, the model constructs the building data frame necessary to be provided as input to IN-CORE. Using the fragility curves of (h), the probability of each parcel being in different damage states is provided. The expected damage state is computed using these probabilities and one random sample of damage state is computed. Examples of damage to infrastructure include: Park et al., 2019, Kameshwar et al., 2019, and Sanderson et al., 2021.</p>
+<p>Relevant functions:</p>
+<ul class="simple">
+<li><p>csz!()</p></li>
+<li><p>pyincore_CSZ()</p></li>
+<li><p>bldg_dmg_eq()</p></li>
+<li><p>bldg_dmg_tsu()</p></li>
+<li><p>bldg_dmg_cmltv()</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="DesignConcepts.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Design Concepts</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="RunningModel.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Running the Model</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By Dylan Sanderson<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>

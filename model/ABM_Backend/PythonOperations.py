@@ -67,7 +67,7 @@ class misc_python_ops():
 		hua_path_out = os.path.join(self.temp_dir, 'temp_hua')
 		hua_df = self.housing_unit_allocation(seed=seed, result_name=hua_path_out)
 		prcl_df = pd.merge(prcl_df, hua_df, how='left', left_index=True, right_index=True)
-		prcl_df = self.assign_property_types(prcl_df, comm_bldgs=inputfile_dict['DataAxelCommericalBuildingMapping_drs'])
+		prcl_df = self.assign_property_types(prcl_df, comm_bldgs=inputfile_dict['CommericalBuildingMapping'])
 		prcl_df.reset_index(inplace=True)
 		prcl_df = self.taxlot2bldg_conversion(prcl_df, inputfile_dict["TaxLot2Bldg"])
 
