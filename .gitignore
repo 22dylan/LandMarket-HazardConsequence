@@ -1,6 +1,7 @@
 # gitignore file for github directory
 
 /DetailedModelDescription.docx
+/~$tailedModelDescription.docx
 /model/model_out
 /model/temp
 
