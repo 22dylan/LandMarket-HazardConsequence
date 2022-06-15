@@ -13,7 +13,6 @@ Agents in the model represent entities that own and modify the built environment
 
 
 ### Agents
-The six agents are as follows: 
 #### Unoccupied Owner
 These agents are associated with unoccupied parcels and act as “sellers” in the model. As other agents bid on their parcel, they review the bids selecting the maximum if it exceeds their willingness to accept the price.  
 

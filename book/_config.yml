@@ -3,7 +3,7 @@
 
 title: Integrated Land Market and Hazard Consequence Model
 author: Dylan Sanderson
-logo: images/TemporalSetting6.png
+logo: images/icon.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
