@@ -16,7 +16,7 @@ The ODD (Overview, Design concepts, and Details) protocol is commonly used to de
 
 ## Background on Seaside
 
-The North American Pacific Northwest is subject to the rupture of the Cascadia Subduction Zone (CSZ), which is an approximately 1,000 km long fault located between Cape Mendocino California and Vancouver Island, Canada, and separates the Juan de Fuca and North America plates. Rupture of the CSZ can result in both strong earthquake ground shaking and tsunami inundation. The last full rupture of the CSZ occurred in 1700 and is estimated to have had a moment magnitude between 8.7 and 9.2. The city of Seaside is a small coastal town located along the northern Oregon coast, and has a full-time population of approximately 6,700 people. As a popular coastal town, Seaside see's large population flucuations both seasonally (e.g. winter vs. summer population) and weekly (e.g. weekday vs. weekend population). 
+The North American Pacific Northwest is subject to the rupture of the Cascadia Subduction Zone (CSZ), which is an approximately 1,000 km long fault located between Cape Mendocino California and Vancouver Island, Canada, and separates the Juan de Fuca and North America plates. Rupture of the CSZ can result in both strong earthquake ground shaking and tsunami inundation. The last full rupture of the CSZ occurred in 1700 and is estimated to have had a moment magnitude between 8.7 and 9.2. The city of Seaside is a small coastal town located along the northern Oregon coast, and has a full-time population of approximately 6,700 people. As a popular coastal town, Seaside sees large population flucuations both seasonally (e.g. winter vs. summer population) and weekly (e.g. weekday vs. weekend population). 
 
 
  ```{image} /images/CaseStudy_icon.png

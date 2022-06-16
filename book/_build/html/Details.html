@@ -1112,7 +1112,7 @@
 <p>The model starts here
 Relevant functions:</p>
 <ul class="simple">
-<li><p>main()</p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/run.jl">main()</a></p></li>
 </ul>
 </div>
 <div class="section" id="b-natural-hazard-mitigation-policies">
@@ -1124,8 +1124,8 @@ Relevant functions:</p>
 <p>This submodel represents the <a class="reference external" href="https://incore.ncsa.illinois.edu/doc/pyincore/modules.html#analyses-housingunitallocation">housing unit allocation algorithm in IN-CORE</a> (Rosenheim et al., 2019). This submodel takes publicly available US Census data and stochastically downscales it to the parcel-level. This results in the number of people in each parcel. From the housing unit allocation, the initial land uses are inferred.</p>
 <p>Relevant functions:</p>
 <ul class="simple">
-<li><p>housing_unit_allocation()</p></li>
-<li><p>assign_property_types()</p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/PythonOperations.py">housing_unit_allocation()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/PythonOperations.py">assign_property_types()</a></p></li>
 </ul>
 </div>
 <div class="section" id="d-population-growth-model">
@@ -1134,8 +1134,8 @@ Relevant functions:</p>
 <a class="reference internal image-reference" href="_images/PopulationGrowth.png"><img alt="_images/PopulationGrowth.png" class="align-center" src="_images/PopulationGrowth.png" style="width: 400px;" /></a>
 <p>Relevant functions:</p>
 <ul class="simple">
-<li><p>PopulationGrowth!()</p></li>
-<li><p>PopulationOutMigration!()</p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/MyModel.jl">PopulationGrowth!()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/MyModel.jl">PopulationOutMigration!()</a></p></li>
 </ul>
 </div>
 <div class="section" id="e-land-market-simulation">
@@ -1160,8 +1160,8 @@ P_{mrkt} = 100 \cdot (0.5\cdot\epsilon + 0.5)
 <p>Where <em>d</em> is distance to the feature and <em>k</em> is a tunable parameter.</p>
 <p>Relevant functions:</p>
 <ul class="simple">
-<li><p>SimulateVisitorMarketStep!()</p></li>
-<li><p>SimulateMarketStep!()</p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/MyModel.jl">SimulateVisitorMarketStep!()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/MyModel.jl">SimulateMarketStep!()</a></p></li>
 </ul>
 </div>
 <div class="section" id="f-community-description-at-time-t">
@@ -1169,7 +1169,7 @@ P_{mrkt} = 100 \cdot (0.5\cdot\epsilon + 0.5)
 <p>The community description at time t includes the structural properties, seismic codes, land uses, parcel owners, and number of people in each parcel.</p>
 <p>Relevant functions:</p>
 <ul class="simple">
-<li><p>UpdateModelCounts!()</p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/MyModel.jl">UpdateModelCounts!()</a></p></li>
 </ul>
 </div>
 <div class="section" id="g-hazard-models">
@@ -1186,11 +1186,11 @@ P_{mrkt} = 100 \cdot (0.5\cdot\epsilon + 0.5)
 <p>Damage to physical infrastructure is modeled using IN-CORE. IN-CORE maps the spatially explicit hazard intensity measures of (g) to the community description of (f) using the damage models of (h). The hazard occurs in the model at the time step specified by the user in Input.csv. When this step occurs, the model constructs the building data frame necessary to be provided as input to IN-CORE. Using the fragility curves of (h), the probability of each parcel being in different damage states is provided. The expected damage state is computed using these probabilities and one random sample of damage state is computed. Examples of damage to infrastructure include: Park et al., 2019, Kameshwar et al., 2019, and Sanderson et al., 2021.</p>
 <p>Relevant functions:</p>
 <ul class="simple">
-<li><p>csz!()</p></li>
-<li><p>pyincore_CSZ()</p></li>
-<li><p>bldg_dmg_eq()</p></li>
-<li><p>bldg_dmg_tsu()</p></li>
-<li><p>bldg_dmg_cmltv()</p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/MyModel.jl">csz!()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/PythonOperations.py">pyincore_CSZ()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/PythonOperations.py">bldg_dmg_eq()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/PythonOperations.py">bldg_dmg_tsu()</a></p></li>
+<li><p><a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/ABM_Backend/PythonOperations.py">bldg_dmg_cmltv()</a></p></li>
 </ul>
 </div>
 </div>

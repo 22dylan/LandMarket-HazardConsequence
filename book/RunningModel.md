@@ -1,6 +1,6 @@
 # Running the Model
 
-The source code for the model is available in [this repository](https://github.com/22dylan/UrbanChange-HazardConsequence). The source code and input files can be downloaded here.
+The source code for the model is available in [this repository](https://github.com/22dylan/UrbanChange-HazardConsequence).
 
 ## Code and Package Versions
 The model was written using both Julia and Python. The urban change part of the model is written in Julia whereas the damage and loss component is written in python using [IN-CORE](https://incore.ncsa.illinois.edu). As tested, **Julia 1.7.1** and **python 3.9.5** were used.
