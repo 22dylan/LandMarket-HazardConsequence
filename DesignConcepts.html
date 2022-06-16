@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Design Concepts &#8212; Integrated Land Market and Hazard Consequence Model</title>
+    <title>Design Concepts &#8212; Integrated Urban Change and Hazard Consequence Model</title>
     
   <link href="_static/css/theme.css" rel="stylesheet">
   <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -81,7 +81,7 @@
       <img src="_static/icon.png" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">Integrated Land Market and Hazard Consequence Model</h1>
+      <h1 class="site-logo" id="site-title">Integrated Urban Change and Hazard Consequence Model</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -92,7 +92,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="intro.html">
-   Integrated Land Market and Hazard Consequence Model
+   Integrated Urban Change and Hazard Consequence Model
   </a>
  </li>
 </ul>
@@ -207,6 +207,49 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#emergence">
+   Emergence
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#fitness">
+   Fitness
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prediction">
+   Prediction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sensing">
+   Sensing
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#interaction">
+   Interaction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#stochasticity">
+   Stochasticity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#observation">
+   Observation
+  </a>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -219,6 +262,49 @@
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#emergence">
+   Emergence
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#fitness">
+   Fitness
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prediction">
+   Prediction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sensing">
+   Sensing
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#interaction">
+   Interaction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#stochasticity">
+   Stochasticity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#observation">
+   Observation
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -227,16 +313,35 @@
                 
   <div class="section" id="design-concepts">
 <h1>Design Concepts<a class="headerlink" href="#design-concepts" title="Permalink to this headline">¶</a></h1>
-<p>Design concepts are outlined below:</p>
-<ul class="simple">
-<li><p><em>Emergence</em>: Aggregate counts of the number of parcels and people in each land use under different policy scenarios emerge from the urban change model. The coupled hazard consequence model allows for the number of people in damaged buildings to emerge.</p></li>
-<li><p><em>Fitness</em>: Agents calculate the utility of parcels based on heterogeneous preferences. Utility is calculated using the Cobb-Douglas utility function.</p></li>
-<li><p><em>Prediction</em>: Landlord agents make predictions about whether to put their property on the market as rental residential or low occupancy seasonal rental based on immediate demand for full time residents and visitor agents respectively. Firms apply the same prediction to high-occupancy residential and seasonal rental based on immediate demand for full time residents and visitors.</p></li>
-<li><p><em>Sensing</em>: agents know both how many other agents are in the market searching for parcels and how many available parcels there are.</p></li>
-<li><p><em>Interaction</em>: agents interact with each other when submitting bid prices and reviewing incoming bids.</p></li>
-<li><p><em>Stochasticity</em>: Agent preferences and budgets are heterogeneous and modified for each iteration. Initial land uses are stochastic from the housing unit allocation. Building damages are returned as the probability of being in different damage states. These probabilities are used to both: (1) compute the expected damage state, and (2) sample a random damage state once per iteration.</p></li>
-<li><p><em>Observation</em>: Data is collected at three scales: (1) agent, (2) space, and (3) model. The data is output as CSV files.</p></li>
-</ul>
+<p>Design concepts are outlined below.</p>
+<div class="section" id="emergence">
+<h2>Emergence<a class="headerlink" href="#emergence" title="Permalink to this headline">¶</a></h2>
+<p>Aggregate counts of the number of parcels and people in each land use under different policy scenarios emerge from the urban change model. The coupled hazard consequence model allows for the number of people in damaged buildings to emerge.</p>
+</div>
+<div class="section" id="fitness">
+<h2>Fitness<a class="headerlink" href="#fitness" title="Permalink to this headline">¶</a></h2>
+<p>Agents calculate the utility of parcels based on heterogeneous preferences. Utility is calculated using the Cobb-Douglas utility function.</p>
+</div>
+<div class="section" id="prediction">
+<h2>Prediction<a class="headerlink" href="#prediction" title="Permalink to this headline">¶</a></h2>
+<p>Landlord agents make predictions about whether to put their property on the market as rental residential or low occupancy seasonal rental based on immediate demand for full time residents and visitor agents respectively. Firms apply the same prediction to high-occupancy residential and seasonal rental based on immediate demand for full time residents and visitors.</p>
+</div>
+<div class="section" id="sensing">
+<h2>Sensing<a class="headerlink" href="#sensing" title="Permalink to this headline">¶</a></h2>
+<p>Agents know both how many other agents are in the market searching for parcels and how many available parcels there are.</p>
+</div>
+<div class="section" id="interaction">
+<h2>Interaction<a class="headerlink" href="#interaction" title="Permalink to this headline">¶</a></h2>
+<p>Agents interact with each other when submitting bid prices and reviewing incoming bids.</p>
+</div>
+<div class="section" id="stochasticity">
+<h2>Stochasticity<a class="headerlink" href="#stochasticity" title="Permalink to this headline">¶</a></h2>
+<p>Agent preferences and budgets are heterogeneous and modified for each iteration. Initial land uses are stochastic from the housing unit allocation. Building damages are returned as the probability of being in different damage states. These probabilities are used to both: (1) compute the expected damage state, and (2) sample a random damage state once per iteration.</p>
+</div>
+<div class="section" id="observation">
+<h2>Observation<a class="headerlink" href="#observation" title="Permalink to this headline">¶</a></h2>
+<p>Data is collected at three scales: (1) agent, (2) space, and (3) model. The data is output as CSV files.</p>
+</div>
 </div>
 
     <script type="text/x-thebe-config">

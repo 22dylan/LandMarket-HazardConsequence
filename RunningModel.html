@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Running the Model &#8212; Integrated Land Market and Hazard Consequence Model</title>
+    <title>Running the Model &#8212; Integrated Urban Change and Hazard Consequence Model</title>
     
   <link href="_static/css/theme.css" rel="stylesheet">
   <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -81,7 +81,7 @@
       <img src="_static/icon.png" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">Integrated Land Market and Hazard Consequence Model</h1>
+      <h1 class="site-logo" id="site-title">Integrated Urban Change and Hazard Consequence Model</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -92,7 +92,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="intro.html">
-   Integrated Land Market and Hazard Consequence Model
+   Integrated Urban Change and Hazard Consequence Model
   </a>
  </li>
 </ul>
@@ -207,6 +207,24 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code-and-package-versions">
+   Code and Package Versions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#run-the-model">
+   Run the Model
+  </a>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -219,6 +237,24 @@
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code-and-package-versions">
+   Code and Package Versions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#run-the-model">
+   Run the Model
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -227,6 +263,85 @@
                 
   <div class="section" id="running-the-model">
 <h1>Running the Model<a class="headerlink" href="#running-the-model" title="Permalink to this headline">¶</a></h1>
+<p>The source code for the model is available in <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence">this repository</a>.</p>
+<div class="section" id="code-and-package-versions">
+<h2>Code and Package Versions<a class="headerlink" href="#code-and-package-versions" title="Permalink to this headline">¶</a></h2>
+<p>The model was written using both Julia and Python. The urban change part of the model is written in Julia whereas the damage and loss component is written in python using <a class="reference external" href="https://incore.ncsa.illinois.edu">IN-CORE</a>. As tested, <strong>Julia 1.7.1</strong> and <strong>python 3.9.5</strong> were used.</p>
+<p>The Julia packages used are in the table below.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Package</p></th>
+<th class="head"><p>Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Agents</p></td>
+<td><p>4.5.7</p></td>
+</tr>
+<tr class="row-odd"><td><p>CSV</p></td>
+<td><p>0.8.5</p></td>
+</tr>
+<tr class="row-even"><td><p>Conda</p></td>
+<td><p>1.5.2</p></td>
+</tr>
+<tr class="row-odd"><td><p>DataFrames</p></td>
+<td><p>1.2.2</p></td>
+</tr>
+<tr class="row-even"><td><p>Distributions</p></td>
+<td><p>0.25.41</p></td>
+</tr>
+<tr class="row-odd"><td><p>PyCall</p></td>
+<td><p>1.92.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Random</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>StatsBase</p></td>
+<td><p>0.33.12</p></td>
+</tr>
+<tr class="row-even"><td><p>ProgressMeter</p></td>
+<td><p>1.7.1</p></td>
+</tr>
+</tbody>
+</table>
+<p>The python packages used are in the table below:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Package</p></th>
+<th class="head"><p>Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>os</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>shutil</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p>numpy</p></td>
+<td><p>1.21.2</p></td>
+</tr>
+<tr class="row-odd"><td><p>pandas</p></td>
+<td><p>1.3.3</p></td>
+</tr>
+<tr class="row-even"><td><p>geopandas</p></td>
+<td><p>0.9.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>pyincore</p></td>
+<td><p>1.3.0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="run-the-model">
+<h2>Run the Model<a class="headerlink" href="#run-the-model" title="Permalink to this headline">¶</a></h2>
+<p>To run the model, install the necessary codes and pacakage versions as shown above. Next download the source code in <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence">this repository</a>. The model is contained in the subdirectory <code class="docutils literal notranslate"><span class="pre">UrbanChange-HazardConsequence/model</span></code> There are 10 input model runs in the subfolder <code class="docutils literal notranslate"><span class="pre">UrbanChange-HazardConsequence/model/model_in</span></code>. The user can change input files and parameters as discussed <a class="reference internal" href="Details.html#input-label"><span class="std std-ref">here</span></a>.</p>
+<p>The user can define which input model to run by opening the <code class="docutils literal notranslate"><span class="pre">run.jl</span></code> file, navigating to the end of this file and updating the model runname to consider in the variable <em>model_runnames</em>.</p>
+<p>After downloading the source code and input files, updating which model run to consider in <code class="docutils literal notranslate"><span class="pre">run.jl</span></code>, navigate to the main model folder, <code class="docutils literal notranslate"><span class="pre">UrbanChange-HazardConsequence/model/</span></code>, and type the following in the terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">julia</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">ABM_env</span> <span class="n">run</span><span class="o">.</span><span class="n">jl</span>
+</pre></div>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
