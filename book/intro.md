@@ -1,6 +1,6 @@
-# Integrated Land Market and Hazard Consequence Model
+# Integrated Urban Change and Hazard Consequence Model
 
-This document describes in detail the integrated land market and hazard consequence model in [this repository](https://github.com/22dylan/LandMarket-HazardConsequence). The ABM is written in Julia using Agents.jl (Datseris et al., 2022). [IN-CORE](https://incore.ncsa.illinois.edu) is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).
+This document describes in detail the integrated urban change and hazard consequence model in [this repository](https://github.com/22dylan/LandMarket-HazardConsequence). The ABM is written in Julia using [Agents.jl](https://juliadynamics.github.io/Agents.jl/stable/) (Datseris et al., 2022). [IN-CORE](https://incore.ncsa.illinois.edu) is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).
 
 The model was developed and tested with Seaside, Oregon and seismic-tsunami hazards associated with the Cascadia Subduction Zone in mind. 
 
@@ -12,7 +12,7 @@ This Jupyter book contains both the ODD protocol for describing the model and ex
 ```
 
 ## ODD
-The ODD (Overview, Design concepts, and Details) protocol is commonly used to describe agent-based models (Grimm et al., 2006). This section describes the integrated land market and hazard consequence model in this repository following the ODD protocol. 
+The ODD (Overview, Design concepts, and Details) protocol is commonly used to describe agent-based models (Grimm et al., 2006). This section describes the integrated urban change and hazard consequence model in this repository following the ODD protocol. 
 
 ## Background on Seaside
 
