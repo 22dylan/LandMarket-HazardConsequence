@@ -4,9 +4,3 @@ This repository cotains source code of an integrated urban change and hazard con
 
 
 A detailed model description is available here: https://22dylan.github.io/UrbanChange-HazardConsequence/intro.html
-
-## Running the Model
-
-### Code versions
-
-### Example of running the model
