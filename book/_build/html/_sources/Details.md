@@ -23,6 +23,7 @@ The model is initialized with spatial representations of: (1) parcels in a commu
 | y | y-location of the parcel; EPSG:26910 – NAD83/UTM zone 10N is used here |
 
 ***
+(input-label)=
 ## Input
 
 Input to the model consists of both shapefiles and CSZ files.
@@ -31,7 +32,7 @@ Input to the model consists of both shapefiles and CSZ files.
 The table below describes the shapefiles.
 
 #### Beach.shp
-This is a line layer representing the coast for the model run. 
+This is a line layer representing the coast for the model run. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/Beach).
 | Attribute | Description 	|
 | ---		| ---			|
 | ID 		| ID for beach line | 
@@ -42,7 +43,7 @@ This is a line layer representing the coast for the model run.
 
 
 #### Buildings.shp
-This is a point layer representing the buildnigs/parcels for the model run.
+This is a point layer representing the buildnigs/parcels for the model run. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/Buildings).
 
 | Attribute | Description 	|
 | ---		| ---			|
@@ -60,7 +61,7 @@ This is a point layer representing the buildnigs/parcels for the model run.
 
 
 #### CBD.shp
-This is a polygon layer representing the central business district (CBD). 
+This is a polygon layer representing the central business district (CBD). An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/CBD).
 
 | Attribute | Description 	|
 | ---		| ---			|
@@ -73,7 +74,7 @@ This is a polygon layer representing the central business district (CBD).
 
 
 #### CommunityAssets.shp
-This is a point file representing community assets in the model.
+This is a point file representing community assets in the model. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/CommunityAssets).
 
 | Attribute | Description 	|
 | ---		| ---			|
@@ -88,7 +89,7 @@ This is a point file representing community assets in the model.
 
 
 #### Greenspace.shp
-This is a polygon layer representing greenspace in the model
+This is a polygon layer representing greenspace in the model. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/GreenSpace).
 
 | Attribute | Description 	|
 | ---		| ---			|
@@ -100,7 +101,7 @@ This is a polygon layer representing greenspace in the model
 ```
 
 #### Zoning.shp
-This is a polygon layer representing zoning in the model. It needs to align with the zoning.csv file below.
+This is a polygon layer representing zoning in the model. It needs to align with the zoning.csv file below. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/Zoning).
 | Attribute | Description 	|
 | ---		| ---			|
 | guid | Globally unique identifier for zone |
@@ -119,7 +120,7 @@ This is a polygon layer representing zoning in the model. It needs to align with
 The following CSV files are also read as input to the model.
 
 #### Input.csv
-Provides general input to the model
+Provides general input to the model. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/Input.csv). 
 
 | Variable | Default Value | Description | 
 | :------	| :--------	| ----- |
@@ -162,7 +163,7 @@ Provides general input to the model
 
 
 #### Zoning_params.csv
-Maps the zoning abbreviations to the different land uses. The zoning abbreviations must match those in the Zoning.shp file. Each row corresponds to a zone, and each column to a land use. Default values are provided below. Boolean values are represented as 1 (True) and 0 (False).
+Maps the zoning abbreviations to the different land uses. The zoning abbreviations must match those in the Zoning.shp file. Each row corresponds to a zone, and each column to a land use. Default values are provided below. Boolean values are represented as 1 (True) and 0 (False). An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/zoning_params.csv). 
 | Zone | unoccupied | owned_res | rentl_res | ho_res | losr | hosr | comm | 
 | -- 	| --| --| --| --| --| --| --| 
 | OS 	| 1 | 0 | 0 | 0 | 0 | 0 | 0 | 
@@ -172,7 +173,7 @@ Maps the zoning abbreviations to the different land uses. The zoning abbreviatio
 | C 	| 1 | 0 | 0 | 1 | 0 | 1 | 1 | 
 
 #### BuildingCodes.csv
-Input file describing mandatory building codes when a new change of hands occurs. 
+Input file describing mandatory building codes when a new change of hands occurs. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/BuildingCodes.csv)
 | Variable | Description | 
 | --- | --- |
 | from | Initial land use before change of hands |
@@ -182,7 +183,7 @@ Input file describing mandatory building codes when a new change of hands occurs
 | Required | Boolean indicating whether the change is required. Boolean values represented as True/False |
 
 #### PopulationGrowth.csv
-Input file describing deterministic population projections. These are provided for both full time residents and visitors
+Input file describing deterministic population projections. These are provided for both full time residents and visitors. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/PopulationGrowth.csv).
 | Variable | Description |
 | --- | --- |
 | Tick | Time step in model. Starts at 0; must be in 5-year increments |
@@ -191,7 +192,7 @@ Input file describing deterministic population projections. These are provided f
 | Year | Year in actual model; this column is not used in the model, but rather provided for the user |
 
 #### PreferenceMatrix.csv
-Matrix describing preferences. If a standard deviation is provided, the preferences are sampled from a normal distribution parameterized on a mean and standard deviation. An example preference matrix is provided below. In this case, a household agent’s preference for parcels near the coast will be sampled from a normal distribution with N(0.3, 0.2). 
+Matrix describing preferences. If a standard deviation is provided, the preferences are sampled from a normal distribution parameterized on a mean and standard deviation. An example preference matrix is provided below. In this case, a household agent’s preference for parcels near the coast will be sampled from a normal distribution with N(0.3, 0.2). An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/PreferenceMatrix.csv).
 |  			| household | visitor | Landlord - rentl_res | Landlord - losr | Firm - hor | Firm - hosr | 
 | ---- 		| ----	|	--	|	--	|	--	|	--	|	--	|		
 | α_coast 	| 0.3 	| 0.7 	| 0.2 	| 0.4 	| 0.15 	| 0.15 	| 
@@ -201,7 +202,7 @@ Matrix describing preferences. If a standard deviation is provided, the preferen
 | σ 		| 0.2 	| 0.2 	| 0.1 	| 0.1 	| 0.1 	| 0.1 	| 
 
 #### TaxLot2Bldg.csv
-Optional input file that maps tax-lots to a single building. This is provided because some tax-lots in Seaside are contained within a single building (a condo containing multiple tax-lots). In the model, one building is represented as a parcel rather than the many tax-lots located therein.  If not using, leave this file blank with the columns provided. 
+Optional input file that maps tax-lots to a single building. This is provided because some tax-lots in Seaside are contained within a single building (a condo containing multiple tax-lots). In the model, one building is represented as a parcel rather than the many tax-lots located therein.  If not using, leave this file blank with the columns provided. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/TaxLot2Bldg.csv). 
 | Variable | Description |
 | --- | --- |
 | guid | Globally unique identifier for the parcel |
@@ -209,7 +210,7 @@ Optional input file that maps tax-lots to a single building. This is provided be
 | max_n_agents | Maximum number of agents in the building; that is, the number of tax-lots that are represented. |
 
 #### CommercialBuildingMapping.csv
-Optional file describing which parcels are commercial buildings in the community. These are assumed static and do not change with this version of the model. If unknown, leave this file blank with the column provided. 
+Optional file describing which parcels are commercial buildings in the community. These are assumed static and do not change with this version of the model. If unknown, leave this file blank with the column provided. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/CommericalBuildingMapping.csv).
 
 | Variable | Description | 
 | --- | --- | 

@@ -591,17 +591,17 @@
 </tr>
 </tbody>
 </table>
-</div>
 <hr class="docutils" />
+</div>
 <div class="section" id="input">
-<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<span id="input-label"></span><h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
 <p>Input to the model consists of both shapefiles and CSZ files.</p>
 <div class="section" id="shapefiles">
 <h3>Shapefiles<a class="headerlink" href="#shapefiles" title="Permalink to this headline">¶</a></h3>
 <p>The table below describes the shapefiles.</p>
 <div class="section" id="beach-shp">
 <h4>Beach.shp<a class="headerlink" href="#beach-shp" title="Permalink to this headline">¶</a></h4>
-<p>This is a line layer representing the coast for the model run.</p>
+<p>This is a line layer representing the coast for the model run. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/Beach">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Attribute</p></th>
@@ -618,7 +618,7 @@
 </div>
 <div class="section" id="buildings-shp">
 <h4>Buildings.shp<a class="headerlink" href="#buildings-shp" title="Permalink to this headline">¶</a></h4>
-<p>This is a point layer representing the buildnigs/parcels for the model run.</p>
+<p>This is a point layer representing the buildnigs/parcels for the model run. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/Buildings">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Attribute</p></th>
@@ -647,7 +647,7 @@
 </div>
 <div class="section" id="cbd-shp">
 <h4>CBD.shp<a class="headerlink" href="#cbd-shp" title="Permalink to this headline">¶</a></h4>
-<p>This is a polygon layer representing the central business district (CBD).</p>
+<p>This is a polygon layer representing the central business district (CBD). An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/CBD">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Attribute</p></th>
@@ -664,7 +664,7 @@
 </div>
 <div class="section" id="communityassets-shp">
 <h4>CommunityAssets.shp<a class="headerlink" href="#communityassets-shp" title="Permalink to this headline">¶</a></h4>
-<p>This is a point file representing community assets in the model.</p>
+<p>This is a point file representing community assets in the model. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/CommunityAssets">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Attribute</p></th>
@@ -687,7 +687,7 @@
 </div>
 <div class="section" id="greenspace-shp">
 <h4>Greenspace.shp<a class="headerlink" href="#greenspace-shp" title="Permalink to this headline">¶</a></h4>
-<p>This is a polygon layer representing greenspace in the model</p>
+<p>This is a polygon layer representing greenspace in the model. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/GreenSpace">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Attribute</p></th>
@@ -704,7 +704,7 @@
 </div>
 <div class="section" id="zoning-shp">
 <h4>Zoning.shp<a class="headerlink" href="#zoning-shp" title="Permalink to this headline">¶</a></h4>
-<p>This is a polygon layer representing zoning in the model. It needs to align with the zoning.csv file below.</p>
+<p>This is a polygon layer representing zoning in the model. It needs to align with the zoning.csv file below. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/Zoning">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Attribute</p></th>
@@ -732,7 +732,7 @@
 <p>The following CSV files are also read as input to the model.</p>
 <div class="section" id="input-csv">
 <h4>Input.csv<a class="headerlink" href="#input-csv" title="Permalink to this headline">¶</a></h4>
-<p>Provides general input to the model</p>
+<p>Provides general input to the model. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/Input.csv">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="text-align:left head"><p>Variable</p></th>
@@ -890,7 +890,7 @@
 </div>
 <div class="section" id="zoning-params-csv">
 <h4>Zoning_params.csv<a class="headerlink" href="#zoning-params-csv" title="Permalink to this headline">¶</a></h4>
-<p>Maps the zoning abbreviations to the different land uses. The zoning abbreviations must match those in the Zoning.shp file. Each row corresponds to a zone, and each column to a land use. Default values are provided below. Boolean values are represented as 1 (True) and 0 (False).</p>
+<p>Maps the zoning abbreviations to the different land uses. The zoning abbreviations must match those in the Zoning.shp file. Each row corresponds to a zone, and each column to a land use. Default values are provided below. Boolean values are represented as 1 (True) and 0 (False). An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/zoning_params.csv">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Zone</p></th>
@@ -954,7 +954,7 @@
 </div>
 <div class="section" id="buildingcodes-csv">
 <h4>BuildingCodes.csv<a class="headerlink" href="#buildingcodes-csv" title="Permalink to this headline">¶</a></h4>
-<p>Input file describing mandatory building codes when a new change of hands occurs.</p>
+<p>Input file describing mandatory building codes when a new change of hands occurs. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/BuildingCodes.csv">here</a></p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
@@ -982,7 +982,7 @@
 </div>
 <div class="section" id="populationgrowth-csv">
 <h4>PopulationGrowth.csv<a class="headerlink" href="#populationgrowth-csv" title="Permalink to this headline">¶</a></h4>
-<p>Input file describing deterministic population projections. These are provided for both full time residents and visitors</p>
+<p>Input file describing deterministic population projections. These are provided for both full time residents and visitors. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/PopulationGrowth.csv">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
@@ -1007,7 +1007,7 @@
 </div>
 <div class="section" id="preferencematrix-csv">
 <h4>PreferenceMatrix.csv<a class="headerlink" href="#preferencematrix-csv" title="Permalink to this headline">¶</a></h4>
-<p>Matrix describing preferences. If a standard deviation is provided, the preferences are sampled from a normal distribution parameterized on a mean and standard deviation. An example preference matrix is provided below. In this case, a household agent’s preference for parcels near the coast will be sampled from a normal distribution with N(0.3, 0.2).</p>
+<p>Matrix describing preferences. If a standard deviation is provided, the preferences are sampled from a normal distribution parameterized on a mean and standard deviation. An example preference matrix is provided below. In this case, a household agent’s preference for parcels near the coast will be sampled from a normal distribution with N(0.3, 0.2). An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/PreferenceMatrix.csv">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -1065,7 +1065,7 @@
 </div>
 <div class="section" id="taxlot2bldg-csv">
 <h4>TaxLot2Bldg.csv<a class="headerlink" href="#taxlot2bldg-csv" title="Permalink to this headline">¶</a></h4>
-<p>Optional input file that maps tax-lots to a single building. This is provided because some tax-lots in Seaside are contained within a single building (a condo containing multiple tax-lots). In the model, one building is represented as a parcel rather than the many tax-lots located therein.  If not using, leave this file blank with the columns provided.</p>
+<p>Optional input file that maps tax-lots to a single building. This is provided because some tax-lots in Seaside are contained within a single building (a condo containing multiple tax-lots). In the model, one building is represented as a parcel rather than the many tax-lots located therein.  If not using, leave this file blank with the columns provided. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/TaxLot2Bldg.csv">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
@@ -1087,7 +1087,7 @@
 </div>
 <div class="section" id="commercialbuildingmapping-csv">
 <h4>CommercialBuildingMapping.csv<a class="headerlink" href="#commercialbuildingmapping-csv" title="Permalink to this headline">¶</a></h4>
-<p>Optional file describing which parcels are commercial buildings in the community. These are assumed static and do not change with this version of the model. If unknown, leave this file blank with the column provided.</p>
+<p>Optional file describing which parcels are commercial buildings in the community. These are assumed static and do not change with this version of the model. If unknown, leave this file blank with the column provided. An example file is <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence/blob/main/model/model_in/S0_YR30_CSZ500/CommericalBuildingMapping.csv">here</a>.</p>
 <table class="colwidths-auto table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>

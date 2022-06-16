@@ -258,15 +258,10 @@ end
 
 # ------------
 
-#= TODO: 
-	- Run time steps for S2a
-	- Run 1000-year events (in sensitivity folder)
-=#
 model_runnames = [
 
-
 				# # Base scenarios (500-yr event)
-				# "S0_YR30_CSZ500",
+				"S0_YR30_CSZ500",
 				# "S1a_YR30_CSZ500",
 				# "S1b_YR30_CSZ500",
 				# "S1c_YR30_CSZ500",
@@ -276,25 +271,6 @@ model_runnames = [
 				# "S3a_YR30_CSZ500",
 				# "S3b_YR30_CSZ500",
 				# "S3c_YR30_CSZ500",
-
-				# "S2a_YR0_CSZ500",
-				# "S2a_YR5_CSZ500",
-				# "S2a_YR10_CSZ500",
-				# "S2a_YR15_CSZ500",
-				# "S2a_YR20_CSZ500",
-				# "S2a_YR25_CSZ500",
-
-				# "S0_YR30_CSZ1000",
-				# "S1a_YR30_CSZ1000",
-				# "S1b_YR30_CSZ1000",
-				# "S1c_YR30_CSZ1000",
-				# "S2a_YR30_CSZ1000",
-				# "S2b_YR30_CSZ1000",
-				# "S2c_YR30_CSZ1000",
-				"S3a_YR30_CSZ1000",
-				"S3b_YR30_CSZ1000",
-				"S3c_YR30_CSZ1000"
-
 			]
 
 for model_runname in model_runnames
