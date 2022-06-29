@@ -1,8 +1,8 @@
-# Integrated Urban Change and Hazard Consequence Model
+# Coupled Urban Change and Hazard Consequence Model
 
-This document describes in detail the integrated urban change and hazard consequence model in [this repository](https://github.com/22dylan/UrbanChange-HazardConsequence). The ABM is written in Julia using [Agents.jl](https://juliadynamics.github.io/Agents.jl/stable/) (Datseris et al., 2022). [IN-CORE](https://incore.ncsa.illinois.edu) is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).
+This document describes in detail the coupled urban change and hazard consequence model in [this repository](https://github.com/22dylan/UrbanChange-HazardConsequence). The urban change component of the model is an agent-based model (ABM). This is written in Julia using [Agents.jl](https://juliadynamics.github.io/Agents.jl/stable/) (Datseris et al., 2022). [IN-CORE](https://incore.ncsa.illinois.edu) is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).
 
-The model was developed and tested with Seaside, Oregon and seismic-tsunami hazards associated with the Cascadia Subduction Zone in mind. 
+The model was developed and tested with Seaside, Oregon and seismic-tsunami hazards associated with the Cascadia Subduction Zone in mind. The model can be applied to other communities and natural hazards. 
 
 This Jupyter book contains both the ODD protocol for describing the model and examples of how to run the source code. 
 
@@ -10,9 +10,6 @@ This Jupyter book contains both the ODD protocol for describing the model and ex
 :width: 400px
 :align: center
 ```
-
-## ODD
-The ODD (Overview, Design concepts, and Details) protocol is commonly used to describe agent-based models (Grimm et al., 2006). This section describes the integrated urban change and hazard consequence model in this repository following the ODD protocol. 
 
 ## Background on Seaside
 
@@ -29,5 +26,4 @@ The North American Pacific Northwest is subject to the rupture of the Cascadia S
 ## Funding
 
 
-This work was funded by the cooperative agreement 70NANB15H044 between the National Institute of Standards and Technology (NIST) and Colorado State University through a subaward to Oregon State University. The content expressed in this book are the views of the authors and do not necessarily represent the opinions or views of NIST or the U.S Department of Commerce.
-
+We acknowledge funding in part through Oregon Sea Grant under award no. NA18OAR170072 (CDFA no. 11.417) from NOAA’s National Sea Grant College Program, US Department of Commerce, and by appropriations made by the Oregon State Legislature; the cooperative agreement 70NANB15H044 between the National Institute of Standards and Technology (NIST) and Colorado State University through a subaward to Oregon State University; and the National Science Foundation through award NSF-2103713. The content expressed in this paper are the views of the authors and do not necessarily represent the opinions or views of the U.S Department of Commerce, NIST, or NSF.
