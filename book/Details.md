@@ -89,7 +89,7 @@ This is a point file representing community assets in the model. An example file
 
 
 #### Greenspace.shp
-This is a polygon layer representing greenspace in the model. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/GreenSpace).
+This is a polygon layer representing greenspace in the model. An example file is [here](https://github.com/22dylan/UrbanChange-HazardConsequence/tree/main/model/model_in/S0_YR30_CSZ500/GreenSpace). 
 
 | Attribute | Description 	|
 | ---		| ---			|

@@ -1,6 +1,6 @@
 # Coupled Urban Change and Hazard Consequence Model
 
-This document describes in detail the coupled urban change and hazard consequence model in [this repository](https://github.com/22dylan/UrbanChange-HazardConsequence). The urban change component of the model is an agent-based model (ABM). This is written in Julia using [Agents.jl](https://juliadynamics.github.io/Agents.jl/stable/) (Datseris et al., 2022). [IN-CORE](https://incore.ncsa.illinois.edu) is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).
+This document describes in detail the coupled urban change and hazard consequence model in [this repository](https://github.com/22dylan/UrbanChange-HazardConsequence). The urban change component of the model is an agent-based model (ABM) and is written in Julia using [Agents.jl](https://juliadynamics.github.io/Agents.jl/stable/) (Datseris et al., 2022). [IN-CORE](https://incore.ncsa.illinois.edu) is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).
 
 The model was developed and tested with Seaside, Oregon and seismic-tsunami hazards associated with the Cascadia Subduction Zone in mind. The model can be applied to other communities and natural hazards. 
 
@@ -13,7 +13,7 @@ This Jupyter book contains both the ODD protocol for describing the model and ex
 
 ## Background on Seaside
 
-The North American Pacific Northwest is subject to the rupture of the Cascadia Subduction Zone (CSZ), which is an approximately 1,000 km long fault located between Cape Mendocino California and Vancouver Island, Canada, and separates the Juan de Fuca and North America plates. Rupture of the CSZ can result in both strong earthquake ground shaking and tsunami inundation. The last full rupture of the CSZ occurred in 1700 and is estimated to have had a moment magnitude between 8.7 and 9.2. The city of Seaside is a small coastal town located along the northern Oregon coast, and has a full-time population of approximately 6,700 people. As a popular coastal town, Seaside sees large population flucuations both seasonally (e.g. winter vs. summer population) and weekly (e.g. weekday vs. weekend population). 
+The North American Pacific Northwest is subject to the rupture of the Cascadia Subduction Zone (CSZ). The CSZ is an approximately 1,000 km long fault located between Cape Mendocino California and Vancouver Island, Canada, and separates the Juan de Fuca and North America plates. Rupture of the CSZ can result in both strong earthquake ground shaking and tsunami inundation. The last full rupture of the CSZ occurred in 1700 and is estimated to have had a moment magnitude between 8.7 and 9.2. The city of Seaside is a small coastal town located along the northern Oregon coast, and has a full-time population of approximately 7,115 people. As a popular coastal town, Seaside sees large population flucuations both seasonally (e.g. winter vs. summer population) and weekly (e.g. weekday vs. weekend population). 
 
 
  ```{image} /images/CaseStudy_icon.png
