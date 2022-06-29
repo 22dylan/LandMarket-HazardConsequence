@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Integrated Urban Change and Hazard Consequence Model &#8212; Integrated Urban Change and Hazard Consequence Model</title>
+    <title>Coupled Urban Change and Hazard Consequence Model &#8212; Coupled Urban Change and Hazard Consequence Model</title>
     
   <link href="_static/css/theme.css" rel="stylesheet">
   <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -80,7 +80,7 @@
       <img src="_static/icon.png" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">Integrated Urban Change and Hazard Consequence Model</h1>
+      <h1 class="site-logo" id="site-title">Coupled Urban Change and Hazard Consequence Model</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -91,7 +91,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1 current">
   <a class="reference internal" href="#">
-   Integrated Urban Change and Hazard Consequence Model
+   Coupled Urban Change and Hazard Consequence Model
   </a>
  </li>
 </ul>
@@ -212,11 +212,6 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#odd">
-   ODD
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#background-on-seaside">
    Background on Seaside
   </a>
@@ -236,7 +231,7 @@
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Integrated Urban Change and Hazard Consequence Model</h1>
+                <h1>Coupled Urban Change and Hazard Consequence Model</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -246,11 +241,6 @@
                         </div>
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#odd">
-   ODD
-  </a>
- </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#background-on-seaside">
    Background on Seaside
@@ -270,24 +260,20 @@
             
               <div>
                 
-  <div class="section" id="integrated-urban-change-and-hazard-consequence-model">
-<h1>Integrated Urban Change and Hazard Consequence Model<a class="headerlink" href="#integrated-urban-change-and-hazard-consequence-model" title="Permalink to this headline">¶</a></h1>
-<p>This document describes in detail the integrated urban change and hazard consequence model in <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence">this repository</a>. The ABM is written in Julia using <a class="reference external" href="https://juliadynamics.github.io/Agents.jl/stable/">Agents.jl</a> (Datseris et al., 2022). <a class="reference external" href="https://incore.ncsa.illinois.edu">IN-CORE</a> is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).</p>
-<p>The model was developed and tested with Seaside, Oregon and seismic-tsunami hazards associated with the Cascadia Subduction Zone in mind.</p>
+  <div class="section" id="coupled-urban-change-and-hazard-consequence-model">
+<h1>Coupled Urban Change and Hazard Consequence Model<a class="headerlink" href="#coupled-urban-change-and-hazard-consequence-model" title="Permalink to this headline">¶</a></h1>
+<p>This document describes in detail the coupled urban change and hazard consequence model in <a class="reference external" href="https://github.com/22dylan/UrbanChange-HazardConsequence">this repository</a>. The urban change component of the model is an agent-based model (ABM) and is written in Julia using <a class="reference external" href="https://juliadynamics.github.io/Agents.jl/stable/">Agents.jl</a> (Datseris et al., 2022). <a class="reference external" href="https://incore.ncsa.illinois.edu">IN-CORE</a> is used to model damage and losses resulting from natural hazards (van de Lindt et al., 2018).</p>
+<p>The model was developed and tested with Seaside, Oregon and seismic-tsunami hazards associated with the Cascadia Subduction Zone in mind. The model can be applied to other communities and natural hazards.</p>
 <p>This Jupyter book contains both the ODD protocol for describing the model and examples of how to run the source code.</p>
 <a class="reference internal image-reference" href="_images/TemporalSetting6.png"><img alt="_images/TemporalSetting6.png" class="align-center" src="_images/TemporalSetting6.png" style="width: 400px;" /></a>
-<div class="section" id="odd">
-<h2>ODD<a class="headerlink" href="#odd" title="Permalink to this headline">¶</a></h2>
-<p>The ODD (Overview, Design concepts, and Details) protocol is commonly used to describe agent-based models (Grimm et al., 2006). This section describes the integrated urban change and hazard consequence model in this repository following the ODD protocol.</p>
-</div>
 <div class="section" id="background-on-seaside">
 <h2>Background on Seaside<a class="headerlink" href="#background-on-seaside" title="Permalink to this headline">¶</a></h2>
-<p>The North American Pacific Northwest is subject to the rupture of the Cascadia Subduction Zone (CSZ), which is an approximately 1,000 km long fault located between Cape Mendocino California and Vancouver Island, Canada, and separates the Juan de Fuca and North America plates. Rupture of the CSZ can result in both strong earthquake ground shaking and tsunami inundation. The last full rupture of the CSZ occurred in 1700 and is estimated to have had a moment magnitude between 8.7 and 9.2. The city of Seaside is a small coastal town located along the northern Oregon coast, and has a full-time population of approximately 6,700 people. As a popular coastal town, Seaside sees large population flucuations both seasonally (e.g. winter vs. summer population) and weekly (e.g. weekday vs. weekend population).</p>
+<p>The North American Pacific Northwest is subject to the rupture of the Cascadia Subduction Zone (CSZ). The CSZ is an approximately 1,000 km long fault located between Cape Mendocino California and Vancouver Island, Canada, and separates the Juan de Fuca and North America plates. Rupture of the CSZ can result in both strong earthquake ground shaking and tsunami inundation. The last full rupture of the CSZ occurred in 1700 and is estimated to have had a moment magnitude between 8.7 and 9.2. The city of Seaside is a small coastal town located along the northern Oregon coast, and has a full-time population of approximately 7,115 people. As a popular coastal town, Seaside sees large population flucuations both seasonally (e.g. winter vs. summer population) and weekly (e.g. weekday vs. weekend population).</p>
 <a class="reference internal image-reference" href="_images/CaseStudy_icon.png"><img alt="_images/CaseStudy_icon.png" class="align-center" src="_images/CaseStudy_icon.png" style="width: 400px;" /></a>
 </div>
 <div class="section" id="funding">
 <h2>Funding<a class="headerlink" href="#funding" title="Permalink to this headline">¶</a></h2>
-<p>This work was funded by the cooperative agreement 70NANB15H044 between the National Institute of Standards and Technology (NIST) and Colorado State University through a subaward to Oregon State University. The content expressed in this book are the views of the authors and do not necessarily represent the opinions or views of NIST or the U.S Department of Commerce.</p>
+<p>We acknowledge funding in part through Oregon Sea Grant under award no. NA18OAR170072 (CDFA no. 11.417) from NOAA’s National Sea Grant College Program, US Department of Commerce, and by appropriations made by the Oregon State Legislature; the cooperative agreement 70NANB15H044 between the National Institute of Standards and Technology (NIST) and Colorado State University through a subaward to Oregon State University; and the National Science Foundation through award NSF-2103713. The content expressed in this paper are the views of the authors and do not necessarily represent the opinions or views of the U.S Department of Commerce, NIST, or NSF.</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
